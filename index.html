@@ -1,0 +1,764 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>VEGA Generator Hub</title>
+
+<style>
+*{
+    box-sizing:border-box;
+    margin:0;
+    padding:0;
+    font-family:Arial, sans-serif;
+}
+
+body{
+    background:#f4f7fb;
+    color:#10213b;
+}
+
+/* ================= SIDEBAR ================= */
+
+.sidebar{
+    position:fixed;
+    left:0;
+    top:0;
+    width:245px;
+    height:100vh;
+    background:linear-gradient(180deg,#062d4d,#021d33);
+    color:white;
+    padding:30px 15px;
+}
+
+.logo{
+    font-size:38px;
+    font-weight:800;
+    letter-spacing:2px;
+    margin-bottom:5px;
+}
+
+.logo-sub{
+    font-size:10px;
+    letter-spacing:2px;
+    opacity:.8;
+    margin-bottom:50px;
+}
+
+.menu-item{
+    padding:15px 18px;
+    margin:7px 0;
+    border-radius:9px;
+    cursor:pointer;
+    transition:.2s;
+}
+
+.menu-item:hover,
+.menu-item.active{
+    background:#0873be;
+}
+
+.sidebar-bottom{
+    position:absolute;
+    bottom:35px;
+    left:30px;
+    font-size:13px;
+    letter-spacing:2px;
+    line-height:1.7;
+    opacity:.7;
+}
+
+/* ================= MAIN ================= */
+
+.main{
+    margin-left:245px;
+}
+
+/* ================= HEADER ================= */
+
+.header{
+    background:linear-gradient(90deg,#062d4d,#083d65);
+    color:white;
+    padding:22px 35px;
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+}
+
+.header h1{
+    font-size:30px;
+}
+
+.header-sub{
+    font-size:13px;
+    margin-top:6px;
+    opacity:.8;
+    letter-spacing:1px;
+}
+
+.top-search{
+    width:450px;
+    background:#315d7d;
+    border:none;
+    outline:none;
+    color:white;
+    padding:15px 20px;
+    border-radius:10px;
+}
+
+.top-search::placeholder{
+    color:#d8e2ea;
+}
+
+/* ================= CONTENT ================= */
+
+.content{
+    padding:15px 20px 30px;
+}
+
+/* ================= KPI ================= */
+
+.kpi-grid{
+    display:grid;
+    grid-template-columns:repeat(4,1fr);
+    gap:14px;
+    margin-bottom:14px;
+}
+
+.kpi{
+    background:white;
+    padding:20px;
+    border-radius:12px;
+    box-shadow:0 3px 12px rgba(0,0,0,.08);
+}
+
+.kpi-title{
+    color:#66788c;
+    font-size:13px;
+}
+
+.kpi-value{
+    font-size:28px;
+    font-weight:800;
+    margin-top:6px;
+}
+
+/* ================= FILTERS ================= */
+
+.filters{
+    display:grid;
+    grid-template-columns:1fr 1fr 1fr 1.4fr;
+    gap:12px;
+    margin-bottom:15px;
+}
+
+.filter-box{
+    background:white;
+    padding:13px;
+    border-radius:10px;
+    box-shadow:0 2px 8px rgba(0,0,0,.05);
+}
+
+.filter-box label{
+    display:block;
+    font-size:12px;
+    font-weight:bold;
+    margin-bottom:7px;
+}
+
+.filter-box select,
+.filter-box input{
+    width:100%;
+    border:1px solid #d4dde6;
+    padding:10px;
+    border-radius:7px;
+    outline:none;
+}
+
+/* ================= WORK AREA ================= */
+
+.workspace{
+    display:grid;
+    grid-template-columns:2fr 1fr;
+    gap:15px;
+}
+
+/* ================= CARDS ================= */
+
+.generator-grid{
+    display:grid;
+    grid-template-columns:repeat(3,1fr);
+    gap:13px;
+}
+
+.generator-card{
+    background:white;
+    border-radius:12px;
+    padding:14px;
+    box-shadow:0 3px 12px rgba(0,0,0,.08);
+    cursor:pointer;
+    transition:.2s;
+}
+
+.generator-card:hover{
+    transform:translateY(-3px);
+    box-shadow:0 8px 20px rgba(0,0,0,.12);
+}
+
+.generator-img{
+    width:100%;
+    height:145px;
+    object-fit:contain;
+    margin-bottom:10px;
+}
+
+.tag{
+    display:inline-block;
+    background:#8daac0;
+    color:white;
+    padding:5px 10px;
+    border-radius:5px;
+    font-size:11px;
+    margin-bottom:10px;
+}
+
+.generator-name{
+    font-weight:800;
+    font-size:17px;
+}
+
+.generator-desc{
+    color:#66778b;
+    font-size:13px;
+    margin:7px 0;
+    line-height:1.4;
+}
+
+.price{
+    color:#c76720;
+    font-size:18px;
+    font-weight:800;
+    margin-top:12px;
+}
+
+.datasheet-btn{
+    float:right;
+    border:none;
+    background:#eaf4ff;
+    color:#074a7a;
+    padding:8px 10px;
+    border-radius:7px;
+    font-weight:bold;
+    cursor:pointer;
+}
+
+/* ================= DETAILS ================= */
+
+.details{
+    background:white;
+    border-radius:12px;
+    padding:22px;
+    box-shadow:0 3px 12px rgba(0,0,0,.08);
+}
+
+.details h2{
+    font-size:24px;
+    margin-bottom:5px;
+}
+
+.detail-sub{
+    color:#68798b;
+    margin-bottom:15px;
+}
+
+.detail-img{
+    width:100%;
+    height:230px;
+    object-fit:contain;
+    background:#f7f9fc;
+    border-radius:10px;
+    margin-bottom:15px;
+}
+
+.spec-row{
+    display:flex;
+    justify-content:space-between;
+    padding:9px 0;
+    border-bottom:1px solid #edf1f5;
+}
+
+.spec-label{
+    color:#738397;
+}
+
+.spec-value{
+    font-weight:bold;
+}
+
+.big-button{
+    display:block;
+    width:100%;
+    margin-top:18px;
+    padding:14px;
+    border:none;
+    background:#063b62;
+    color:white;
+    border-radius:8px;
+    font-weight:bold;
+    font-size:14px;
+    cursor:pointer;
+}
+
+.description{
+    margin-top:20px;
+}
+
+.description h3{
+    margin-bottom:8px;
+}
+
+.description p{
+    color:#5e6d7e;
+    line-height:1.5;
+    font-size:14px;
+}
+
+@media(max-width:1100px){
+    .generator-grid{
+        grid-template-columns:repeat(2,1fr);
+    }
+
+    .kpi-grid{
+        grid-template-columns:repeat(2,1fr);
+    }
+}
+</style>
+</head>
+
+<body>
+
+<!-- SIDEBAR -->
+
+<div class="sidebar">
+
+    <div class="logo">VEGA</div>
+    <div class="logo-sub">ENGINEERING SOLUTIONS</div>
+
+    <div class="menu-item active">⌂ &nbsp; Generator Hub</div>
+    <div class="menu-item">▦ &nbsp; Generator Library</div>
+    <div class="menu-item">▤ &nbsp; Categories</div>
+    <div class="menu-item">★ &nbsp; Brands</div>
+    <div class="menu-item">$ &nbsp; Price List</div>
+    <div class="menu-item">▧ &nbsp; Datasheets</div>
+    <div class="menu-item">⇄ &nbsp; Compare</div>
+
+    <div class="sidebar-bottom">
+        POWER<br>
+        GENERATION<br>
+        SOLUTIONS
+    </div>
+
+</div>
+
+<!-- MAIN -->
+
+<div class="main">
+
+    <div class="header">
+
+        <div>
+            <h1>GENERATOR HUB</h1>
+            <div class="header-sub">
+                SEARCH &nbsp; | &nbsp; FILTER &nbsp; | &nbsp;
+                EXPLORE &nbsp; | &nbsp; GET DATASHEET
+            </div>
+        </div>
+
+        <input
+            class="top-search"
+            id="search"
+            type="text"
+            placeholder="Search generator, engine, alternator or model..."
+            onkeyup="filterGenerators()"
+        >
+
+    </div>
+
+    <div class="content">
+
+        <!-- KPI -->
+
+        <div class="kpi-grid">
+
+            <div class="kpi">
+                <div class="kpi-title">Total Generators</div>
+                <div class="kpi-value" id="totalGenerators">6</div>
+            </div>
+
+            <div class="kpi">
+                <div class="kpi-title">Total Brands</div>
+                <div class="kpi-value">4</div>
+            </div>
+
+            <div class="kpi">
+                <div class="kpi-title">Power Range</div>
+                <div class="kpi-value">35–2000</div>
+            </div>
+
+            <div class="kpi">
+                <div class="kpi-title">Datasheets</div>
+                <div class="kpi-value">6</div>
+            </div>
+
+        </div>
+
+        <!-- FILTER -->
+
+        <div class="filters">
+
+            <div class="filter-box">
+                <label>Generator Brand</label>
+                <select id="brandFilter" onchange="filterGenerators()">
+                    <option value="">All</option>
+                    <option>Cummins</option>
+                    <option>Volvo</option>
+                    <option>John Deere</option>
+                    <option>Kubota</option>
+                </select>
+            </div>
+
+            <div class="filter-box">
+                <label>Power Rating</label>
+                <select>
+                    <option>All Ratings</option>
+                    <option>0 – 100 kVA</option>
+                    <option>101 – 500 kVA</option>
+                    <option>501 – 1000 kVA</option>
+                    <option>1000+ kVA</option>
+                </select>
+            </div>
+
+            <div class="filter-box">
+                <label>Application</label>
+                <select>
+                    <option>All</option>
+                    <option>Standby</option>
+                    <option>Prime</option>
+                </select>
+            </div>
+
+            <div class="filter-box">
+                <label>Quick Search</label>
+                <input
+                    type="text"
+                    placeholder="Model, engine, alternator..."
+                    onkeyup="syncSearch(this.value)"
+                >
+            </div>
+
+        </div>
+
+        <!-- WORKSPACE -->
+
+        <div class="workspace">
+
+            <div class="generator-grid" id="generatorGrid"></div>
+
+            <div class="details">
+
+                <span class="tag" id="detailTag">Cummins</span>
+
+                <h2 id="detailName">VPC680</h2>
+
+                <div class="detail-sub" id="detailTitle">
+                    Diesel Generator Set
+                </div>
+
+                <img
+                    id="detailImage"
+                    class="detail-img"
+                    src="https://via.placeholder.com/500x300?text=Generator"
+                >
+
+                <div class="spec-row">
+                    <span class="spec-label">Standby Rating</span>
+                    <span class="spec-value" id="detailKva">680 kVA</span>
+                </div>
+
+                <div class="spec-row">
+                    <span class="spec-label">Engine</span>
+                    <span class="spec-value" id="detailEngine">
+                        Cummins
+                    </span>
+                </div>
+
+                <div class="spec-row">
+                    <span class="spec-label">Alternator</span>
+                    <span class="spec-value" id="detailAlternator">
+                        Stamford
+                    </span>
+                </div>
+
+                <div class="spec-row">
+                    <span class="spec-label">Frequency</span>
+                    <span class="spec-value">60 Hz</span>
+                </div>
+
+                <div class="spec-row">
+                    <span class="spec-label">Power Factor</span>
+                    <span class="spec-value">0.8</span>
+                </div>
+
+                <button class="big-button">
+                    VIEW DATASHEET ↗
+                </button>
+
+                <div class="description">
+
+                    <h3>Description</h3>
+
+                    <p id="detailDescription">
+                        Industrial diesel generator set designed for
+                        reliable standby and prime power applications.
+                    </p>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+<script>
+
+/* ================= DATABASE ================= */
+
+const generators = [
+
+{
+    name:"VPC680",
+    brand:"Cummins",
+    kva:"680 kVA",
+    engine:"Cummins",
+    alternator:"Stamford",
+    description:"Industrial diesel generator set for standby and prime power applications.",
+    image:"https://via.placeholder.com/400x250?text=VPC680"
+},
+
+{
+    name:"VPC570",
+    brand:"Cummins",
+    kva:"570 kVA",
+    engine:"Cummins",
+    alternator:"Stamford",
+    description:"High-performance diesel generator package.",
+    image:"https://via.placeholder.com/400x250?text=VPC570"
+},
+
+{
+    name:"VPD320",
+    brand:"John Deere",
+    kva:"320 kVA",
+    engine:"John Deere",
+    alternator:"Leroy Somer",
+    description:"Reliable generator set for commercial and industrial applications.",
+    image:"https://via.placeholder.com/400x250?text=VPD320"
+},
+
+{
+    name:"VPV450",
+    brand:"Volvo",
+    kva:"450 kVA",
+    engine:"Volvo Penta",
+    alternator:"Stamford",
+    description:"Volvo powered industrial generator set.",
+    image:"https://via.placeholder.com/400x250?text=VPV450"
+},
+
+{
+    name:"VPC1400",
+    brand:"Cummins",
+    kva:"1400 kVA",
+    engine:"KTA50-G3",
+    alternator:"Leroy Somer",
+    description:"Heavy-duty generator for large industrial facilities.",
+    image:"https://via.placeholder.com/400x250?text=VPC1400"
+},
+
+{
+    name:"VPK35",
+    brand:"Kubota",
+    kva:"35 kVA",
+    engine:"Kubota",
+    alternator:"Stamford",
+    description:"Compact diesel generator for light-duty applications.",
+    image:"https://via.placeholder.com/400x250?text=VPK35"
+}
+
+];
+
+
+/* ================= DISPLAY ================= */
+
+function displayGenerators(data){
+
+    const grid =
+        document.getElementById("generatorGrid");
+
+    grid.innerHTML = "";
+
+    data.forEach((gen,index)=>{
+
+        const card =
+        document.createElement("div");
+
+        card.className="generator-card";
+
+        card.onclick =
+        ()=>showDetails(gen);
+
+        card.innerHTML=`
+
+        <span class="tag">
+        ${gen.brand}
+        </span>
+
+        <img
+        class="generator-img"
+        src="${gen.image}"
+        >
+
+        <div class="generator-name">
+        ${gen.name}
+        </div>
+
+        <div class="generator-desc">
+        ${gen.engine}
+        •
+        ${gen.alternator}
+        </div>
+
+        <div class="price">
+        ${gen.kva}
+
+        <button class="datasheet-btn">
+        DATASHEET
+        </button>
+
+        </div>
+
+        `;
+
+        grid.appendChild(card);
+
+    });
+
+    document.getElementById(
+        "totalGenerators"
+    ).innerText=data.length;
+
+}
+
+
+/* ================= DETAILS ================= */
+
+function showDetails(gen){
+
+    document.getElementById(
+        "detailTag"
+    ).innerText=gen.brand;
+
+    document.getElementById(
+        "detailName"
+    ).innerText=gen.name;
+
+    document.getElementById(
+        "detailKva"
+    ).innerText=gen.kva;
+
+    document.getElementById(
+        "detailEngine"
+    ).innerText=gen.engine;
+
+    document.getElementById(
+        "detailAlternator"
+    ).innerText=gen.alternator;
+
+    document.getElementById(
+        "detailDescription"
+    ).innerText=gen.description;
+
+    document.getElementById(
+        "detailImage"
+    ).src=gen.image;
+
+}
+
+
+/* ================= SEARCH ================= */
+
+function filterGenerators(){
+
+    const search =
+    document.getElementById(
+        "search"
+    ).value.toLowerCase();
+
+    const brand =
+    document.getElementById(
+        "brandFilter"
+    ).value;
+
+    const result =
+    generators.filter(gen=>{
+
+        const text =
+        (
+            gen.name+" "+
+            gen.brand+" "+
+            gen.engine+" "+
+            gen.alternator+" "+
+            gen.kva
+        ).toLowerCase();
+
+        const matchSearch =
+        text.includes(search);
+
+        const matchBrand =
+        !brand ||
+        gen.brand===brand;
+
+        return (
+            matchSearch &&
+            matchBrand
+        );
+
+    });
+
+    displayGenerators(result);
+
+}
+
+
+function syncSearch(value){
+
+    document.getElementById(
+        "search"
+    ).value=value;
+
+    filterGenerators();
+
+}
+
+
+/* START */
+
+displayGenerators(generators);
+
+</script>
+
+</body>
+</html>
