@@ -3,760 +3,2786 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>VEGA Generator Hub</title>
+
+<title>VEGA | Generator Hub</title>
 
 <style>
+
+/* =========================================================
+   VEGA GENERATOR HUB
+   ========================================================= */
+
+:root{
+    --red:#e51b2b;
+    --red-dark:#b90f1c;
+    --black:#101014;
+    --black-2:#17171c;
+    --black-3:#202027;
+    --white:#ffffff;
+    --offwhite:#f5f5f6;
+    --grey:#85858f;
+    --light-grey:#e8e8eb;
+    --line:#303038;
+    --green:#1fa866;
+    --shadow:0 18px 50px rgba(0,0,0,.12);
+}
+
 *{
-    box-sizing:border-box;
     margin:0;
     padding:0;
-    font-family:Arial, sans-serif;
+    box-sizing:border-box;
+}
+
+html{
+    scroll-behavior:smooth;
 }
 
 body{
-    background:#f4f7fb;
-    color:#10213b;
+    font-family:Arial, Helvetica, sans-serif;
+    background:#ececef;
+    color:#17171c;
 }
 
-/* ================= SIDEBAR ================= */
+/* =========================================================
+   APP
+   ========================================================= */
+
+.app{
+    display:flex;
+    min-height:100vh;
+}
+
+/* =========================================================
+   SIDEBAR
+   ========================================================= */
 
 .sidebar{
+    width:255px;
+    height:100vh;
     position:fixed;
     left:0;
     top:0;
-    width:245px;
-    height:100vh;
-    background:linear-gradient(180deg,#062d4d,#021d33);
+
+    background:
+        linear-gradient(
+            180deg,
+            rgba(10,10,14,.98),
+            rgba(20,20,25,.98)
+        );
+
     color:white;
-    padding:30px 15px;
+    z-index:100;
+
+    display:flex;
+    flex-direction:column;
+
+    border-right:1px solid rgba(255,255,255,.05);
 }
 
-.logo{
-    font-size:38px;
-    font-weight:800;
+/* decorative VEGA V */
+
+.sidebar::after{
+    content:"V";
+
+    position:absolute;
+    bottom:-80px;
+    left:30px;
+
+    font-size:300px;
+    font-weight:900;
+
+    color:rgba(255,255,255,.018);
+
+    transform:rotate(-8deg);
+
+    pointer-events:none;
+}
+
+/* =========================================================
+   LOGO
+   ========================================================= */
+
+.brand{
+    padding:30px 27px 25px;
+    border-bottom:1px solid rgba(255,255,255,.08);
+}
+
+.vega-logo{
+    display:flex;
+    align-items:center;
+    gap:12px;
+}
+
+.v-symbol{
+    position:relative;
+    width:38px;
+    height:42px;
+}
+
+.v-symbol::before{
+    content:"";
+    position:absolute;
+
+    width:9px;
+    height:38px;
+
+    background:white;
+
+    transform:rotate(-35deg);
+
+    left:7px;
+    top:0;
+}
+
+.v-symbol::after{
+    content:"";
+    position:absolute;
+
+    width:9px;
+    height:35px;
+
+    background:var(--red);
+
+    transform:rotate(35deg);
+
+    right:7px;
+    top:4px;
+}
+
+.brand-name{
+    font-size:27px;
+    font-weight:900;
+    letter-spacing:-1px;
+}
+
+.brand-name span{
+    color:var(--red);
+}
+
+.brand-sub{
+    font-size:9px;
     letter-spacing:2px;
+    color:#a9a9b0;
+
+    margin-top:5px;
+}
+
+/* =========================================================
+   NAVIGATION
+   ========================================================= */
+
+.navigation{
+    padding:25px 14px;
+    flex:1;
+}
+
+.nav-title{
+    font-size:9px;
+    letter-spacing:2px;
+    color:#696971;
+
+    margin:0 13px 10px;
+}
+
+.nav-item{
+    display:flex;
+    align-items:center;
+    gap:13px;
+
+    padding:13px 15px;
     margin-bottom:5px;
-}
 
-.logo-sub{
-    font-size:10px;
-    letter-spacing:2px;
-    opacity:.8;
-    margin-bottom:50px;
-}
+    color:#b9b9c1;
 
-.menu-item{
-    padding:15px 18px;
-    margin:7px 0;
-    border-radius:9px;
+    border-radius:7px;
+
     cursor:pointer;
+
     transition:.2s;
 }
 
-.menu-item:hover,
-.menu-item.active{
-    background:#0873be;
-}
-
-.sidebar-bottom{
-    position:absolute;
-    bottom:35px;
-    left:30px;
-    font-size:13px;
-    letter-spacing:2px;
-    line-height:1.7;
-    opacity:.7;
-}
-
-/* ================= MAIN ================= */
-
-.main{
-    margin-left:245px;
-}
-
-/* ================= HEADER ================= */
-
-.header{
-    background:linear-gradient(90deg,#062d4d,#083d65);
+.nav-item:hover{
     color:white;
-    padding:22px 35px;
-    display:flex;
-    justify-content:space-between;
-    align-items:center;
+    background:#202027;
 }
 
-.header h1{
-    font-size:30px;
-}
+.nav-item.active{
+    background:linear-gradient(
+        90deg,
+        var(--red),
+        #c51220
+    );
 
-.header-sub{
-    font-size:13px;
-    margin-top:6px;
-    opacity:.8;
-    letter-spacing:1px;
-}
-
-.top-search{
-    width:450px;
-    background:#315d7d;
-    border:none;
-    outline:none;
     color:white;
-    padding:15px 20px;
-    border-radius:10px;
 }
 
-.top-search::placeholder{
-    color:#d8e2ea;
+.nav-icon{
+    width:20px;
+    text-align:center;
+    font-size:15px;
 }
 
-/* ================= CONTENT ================= */
-
-.content{
-    padding:15px 20px 30px;
-}
-
-/* ================= KPI ================= */
-
-.kpi-grid{
-    display:grid;
-    grid-template-columns:repeat(4,1fr);
-    gap:14px;
-    margin-bottom:14px;
-}
-
-.kpi{
-    background:white;
-    padding:20px;
-    border-radius:12px;
-    box-shadow:0 3px 12px rgba(0,0,0,.08);
-}
-
-.kpi-title{
-    color:#66788c;
+.nav-text{
     font-size:13px;
+    font-weight:600;
 }
 
-.kpi-value{
-    font-size:28px;
-    font-weight:800;
-    margin-top:6px;
+/* =========================================================
+   SIDEBAR FOOTER
+   ========================================================= */
+
+.side-footer{
+    padding:25px 27px 30px;
+
+    position:relative;
+    z-index:2;
 }
 
-/* ================= FILTERS ================= */
-
-.filters{
-    display:grid;
-    grid-template-columns:1fr 1fr 1fr 1.4fr;
-    gap:12px;
+.side-line{
+    width:32px;
+    height:3px;
+    background:var(--red);
     margin-bottom:15px;
 }
 
-.filter-box{
-    background:white;
-    padding:13px;
-    border-radius:10px;
-    box-shadow:0 2px 8px rgba(0,0,0,.05);
+.side-slogan{
+    font-size:11px;
+    line-height:1.6;
+    letter-spacing:1.3px;
+
+    color:#9a9aa2;
 }
 
-.filter-box label{
-    display:block;
-    font-size:12px;
+.side-slogan strong{
+    color:white;
+}
+
+/* =========================================================
+   MAIN
+   ========================================================= */
+
+.main{
+    width:calc(100% - 255px);
+    margin-left:255px;
+}
+
+/* =========================================================
+   HERO HEADER
+   ========================================================= */
+
+.hero{
+    height:245px;
+
+    position:relative;
+
+    overflow:hidden;
+
+    background:
+        radial-gradient(
+            circle at 75% 30%,
+            rgba(229,27,43,.18),
+            transparent 32%
+        ),
+        linear-gradient(
+            110deg,
+            #101014 0%,
+            #17171d 55%,
+            #24242b 100%
+        );
+}
+
+/* industrial grid */
+
+.hero::before{
+    content:"";
+
+    position:absolute;
+    inset:0;
+
+    background-image:
+        linear-gradient(
+            rgba(255,255,255,.025) 1px,
+            transparent 1px
+        ),
+        linear-gradient(
+            90deg,
+            rgba(255,255,255,.025) 1px,
+            transparent 1px
+        );
+
+    background-size:45px 45px;
+
+    opacity:.35;
+}
+
+.hero::after{
+    content:"V";
+
+    position:absolute;
+
+    right:70px;
+    top:-135px;
+
+    font-size:440px;
+    font-weight:900;
+
+    color:rgba(255,255,255,.018);
+
+    transform:rotate(-8deg);
+}
+
+/* =========================================================
+   TOP BAR
+   ========================================================= */
+
+.topbar{
+    position:relative;
+    z-index:5;
+
+    height:72px;
+
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+
+    padding:0 38px;
+
+    border-bottom:1px solid rgba(255,255,255,.07);
+}
+
+.company-label{
+    font-size:10px;
+    color:#96969f;
+    letter-spacing:1.8px;
+}
+
+.system-status{
+    display:flex;
+    align-items:center;
+    gap:8px;
+
+    color:#aaaab2;
+    font-size:11px;
+}
+
+.status-dot{
+    width:7px;
+    height:7px;
+
+    background:#39c87c;
+
+    border-radius:50%;
+
+    box-shadow:0 0 12px #39c87c;
+}
+
+/* =========================================================
+   HERO CONTENT
+   ========================================================= */
+
+.hero-content{
+    position:relative;
+    z-index:4;
+
+    display:flex;
+    justify-content:space-between;
+    align-items:flex-end;
+
+    padding:30px 38px;
+}
+
+.eyebrow{
+    font-size:10px;
+    letter-spacing:4px;
+
+    color:var(--red);
+
     font-weight:bold;
+
+    margin-bottom:10px;
+}
+
+.hero h1{
+    color:white;
+
+    font-size:43px;
+    line-height:.95;
+
+    font-weight:900;
+
+    letter-spacing:-1.5px;
+}
+
+.hero h1 span{
+    color:var(--red);
+}
+
+.hero-description{
+    margin-top:12px;
+
+    color:#9898a1;
+
+    font-size:12px;
+
+    max-width:560px;
+
+    line-height:1.6;
+}
+
+/* =========================================================
+   HERO SEARCH
+   ========================================================= */
+
+.hero-search{
+    width:430px;
+}
+
+.search-label{
+    color:#797982;
+
+    font-size:9px;
+
+    letter-spacing:2px;
+
+    margin-bottom:8px;
+}
+
+.search-box{
+    display:flex;
+
+    background:#202027;
+
+    border:1px solid #34343d;
+
+    border-radius:8px;
+
+    overflow:hidden;
+
+    transition:.2s;
+}
+
+.search-box:focus-within{
+    border-color:var(--red);
+
+    box-shadow:
+        0 0 0 3px rgba(229,27,43,.08);
+}
+
+.search-icon{
+    width:50px;
+
+    display:flex;
+    align-items:center;
+    justify-content:center;
+
+    color:var(--red);
+}
+
+.search-box input{
+    flex:1;
+
+    padding:15px 10px;
+
+    background:transparent;
+
+    border:none;
+    outline:none;
+
+    color:white;
+
+    font-size:13px;
+}
+
+.search-box input::placeholder{
+    color:#777780;
+}
+
+.search-shortcut{
+    display:flex;
+    align-items:center;
+
+    padding-right:15px;
+
+    color:#66666e;
+
+    font-size:10px;
+}
+
+/* =========================================================
+   CONTENT
+   ========================================================= */
+
+.content{
+    padding:25px 28px 60px;
+}
+
+/* =========================================================
+   KPI
+   ========================================================= */
+
+.stats{
+    display:grid;
+
+    grid-template-columns:
+        repeat(4,1fr);
+
+    gap:14px;
+
+    margin-top:-50px;
+
+    position:relative;
+
+    z-index:10;
+}
+
+.stat{
+    background:white;
+
+    min-height:108px;
+
+    border-radius:8px;
+
+    padding:20px;
+
+    display:flex;
+    align-items:center;
+
+    box-shadow:var(--shadow);
+
+    border-bottom:
+        3px solid transparent;
+
+    transition:.25s;
+}
+
+.stat:hover{
+    transform:translateY(-4px);
+
+    border-bottom-color:var(--red);
+}
+
+.stat-icon{
+    width:49px;
+    height:49px;
+
+    background:#f6f6f7;
+
+    border:1px solid #ececef;
+
+    display:flex;
+    align-items:center;
+    justify-content:center;
+
+    border-radius:7px;
+
+    color:var(--red);
+
+    font-size:20px;
+
+    margin-right:15px;
+}
+
+.stat-label{
+    font-size:10px;
+
+    text-transform:uppercase;
+
+    letter-spacing:1.2px;
+
+    color:#85858d;
+}
+
+.stat-number{
+    margin-top:4px;
+
+    font-size:24px;
+
+    font-weight:900;
+
+    color:#17171c;
+}
+
+/* =========================================================
+   FILTER BAR
+   ========================================================= */
+
+.filters{
+    margin-top:20px;
+
+    background:white;
+
+    border-radius:8px;
+
+    padding:16px;
+
+    display:grid;
+
+    grid-template-columns:
+        1fr 1fr 1fr 1fr 1.5fr;
+
+    gap:12px;
+
+    box-shadow:
+        0 5px 25px rgba(0,0,0,.05);
+}
+
+.filter label{
+    display:block;
+
+    font-size:9px;
+
+    font-weight:bold;
+
+    letter-spacing:1px;
+
+    text-transform:uppercase;
+
+    color:#83838b;
+
     margin-bottom:7px;
 }
 
-.filter-box select,
-.filter-box input{
+.filter select,
+.filter input{
     width:100%;
-    border:1px solid #d4dde6;
-    padding:10px;
-    border-radius:7px;
+
+    height:40px;
+
+    border:1px solid #ddddE2;
+
+    border-radius:6px;
+
+    padding:0 11px;
+
+    background:#fafafa;
+
     outline:none;
+
+    color:#25252a;
 }
 
-/* ================= WORK AREA ================= */
+.filter select:focus,
+.filter input:focus{
+    border-color:var(--red);
+}
+
+/* =========================================================
+   SECTION HEADER
+   ========================================================= */
+
+.section-head{
+    margin:27px 0 15px;
+
+    display:flex;
+    justify-content:space-between;
+    align-items:end;
+}
+
+.section-eyebrow{
+    font-size:9px;
+
+    color:var(--red);
+
+    letter-spacing:2px;
+
+    font-weight:bold;
+}
+
+.section-title{
+    margin-top:4px;
+
+    font-size:22px;
+
+    font-weight:900;
+}
+
+.results{
+    font-size:11px;
+    color:#8a8a92;
+}
+
+/* =========================================================
+   WORKSPACE
+   ========================================================= */
 
 .workspace{
     display:grid;
-    grid-template-columns:2fr 1fr;
-    gap:15px;
+
+    grid-template-columns:
+        minmax(0,2fr)
+        390px;
+
+    gap:18px;
 }
 
-/* ================= CARDS ================= */
+/* =========================================================
+   GENERATOR GRID
+   ========================================================= */
 
 .generator-grid{
     display:grid;
-    grid-template-columns:repeat(3,1fr);
-    gap:13px;
+
+    grid-template-columns:
+        repeat(3,minmax(0,1fr));
+
+    gap:14px;
 }
+
+/* =========================================================
+   PRODUCT CARD
+   ========================================================= */
 
 .generator-card{
     background:white;
-    border-radius:12px;
-    padding:14px;
-    box-shadow:0 3px 12px rgba(0,0,0,.08);
+
+    border-radius:8px;
+
+    overflow:hidden;
+
     cursor:pointer;
-    transition:.2s;
+
+    border:1px solid #e6e6e9;
+
+    transition:.25s;
+
+    position:relative;
 }
 
 .generator-card:hover{
-    transform:translateY(-3px);
-    box-shadow:0 8px 20px rgba(0,0,0,.12);
+    transform:translateY(-5px);
+
+    box-shadow:
+        0 18px 40px rgba(0,0,0,.11);
+
+    border-color:
+        rgba(229,27,43,.35);
+}
+
+.card-top{
+    height:185px;
+
+    background:
+        linear-gradient(
+            145deg,
+            #fafafa,
+            #f0f0f2
+        );
+
+    position:relative;
+
+    display:flex;
+    align-items:center;
+    justify-content:center;
+}
+
+.card-top::after{
+    content:"VEGA";
+
+    position:absolute;
+
+    font-size:52px;
+
+    font-weight:900;
+
+    color:rgba(0,0,0,.025);
+}
+
+.brand-tag{
+    position:absolute;
+
+    top:12px;
+    left:12px;
+
+    z-index:3;
+
+    padding:6px 9px;
+
+    background:#17171c;
+
+    color:white;
+
+    border-radius:4px;
+
+    font-size:9px;
+
+    font-weight:bold;
+
+    letter-spacing:.7px;
+}
+
+.rating-tag{
+    position:absolute;
+
+    top:12px;
+    right:12px;
+
+    z-index:3;
+
+    color:var(--red);
+
+    font-size:11px;
+
+    font-weight:900;
 }
 
 .generator-img{
-    width:100%;
-    height:145px;
+    width:88%;
+    height:150px;
+
     object-fit:contain;
-    margin-bottom:10px;
+
+    position:relative;
+    z-index:2;
 }
 
-.tag{
-    display:inline-block;
-    background:#8daac0;
-    color:white;
-    padding:5px 10px;
-    border-radius:5px;
-    font-size:11px;
-    margin-bottom:10px;
+/* fallback graphic */
+
+.no-image{
+    position:relative;
+    z-index:2;
+
+    width:110px;
+    height:65px;
+
+    border:3px solid #25252a;
+
+    border-radius:4px;
+
+    display:flex;
+    align-items:center;
+    justify-content:center;
+
+    color:#25252a;
+
+    font-weight:900;
 }
 
-.generator-name{
-    font-weight:800;
-    font-size:17px;
+.no-image::before{
+    content:"";
+
+    position:absolute;
+
+    width:18px;
+    height:18px;
+
+    border-radius:50%;
+
+    border:3px solid #25252a;
+
+    left:12px;
+    bottom:-13px;
+
+    background:#f5f5f6;
 }
 
-.generator-desc{
-    color:#66778b;
-    font-size:13px;
-    margin:7px 0;
-    line-height:1.4;
+.no-image::after{
+    content:"";
+
+    position:absolute;
+
+    width:18px;
+    height:18px;
+
+    border-radius:50%;
+
+    border:3px solid #25252a;
+
+    right:12px;
+    bottom:-13px;
+
+    background:#f5f5f6;
 }
 
-.price{
-    color:#c76720;
+.card-body{
+    padding:16px;
+}
+
+.card-code{
     font-size:18px;
-    font-weight:800;
-    margin-top:12px;
+
+    font-weight:900;
+
+    color:#15151a;
 }
 
-.datasheet-btn{
-    float:right;
-    border:none;
-    background:#eaf4ff;
-    color:#074a7a;
-    padding:8px 10px;
-    border-radius:7px;
+.card-series{
+    margin-top:3px;
+
+    color:#9999a1;
+
+    font-size:10px;
+}
+
+.card-specs{
+    display:grid;
+
+    grid-template-columns:1fr 1fr;
+
+    margin-top:14px;
+
+    border-top:1px solid #eeeeF0;
+    border-bottom:1px solid #eeeeF0;
+}
+
+.mini-spec{
+    padding:10px 0;
+}
+
+.mini-spec:nth-child(2){
+    padding-left:12px;
+
+    border-left:1px solid #eeeeF0;
+}
+
+.mini-label{
+    color:#9999a1;
+
+    font-size:8px;
+
+    text-transform:uppercase;
+
+    letter-spacing:.8px;
+}
+
+.mini-value{
+    margin-top:4px;
+
+    font-size:11px;
+
     font-weight:bold;
+}
+
+.card-footer{
+    padding-top:13px;
+
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+}
+
+.kva{
+    color:var(--red);
+
+    font-size:19px;
+
+    font-weight:900;
+}
+
+.view-button{
+    background:#17171c;
+
+    color:white;
+
+    border:none;
+
+    border-radius:5px;
+
+    padding:9px 11px;
+
+    font-size:9px;
+
+    font-weight:bold;
+
     cursor:pointer;
+
+    transition:.2s;
 }
 
-/* ================= DETAILS ================= */
-
-.details{
-    background:white;
-    border-radius:12px;
-    padding:22px;
-    box-shadow:0 3px 12px rgba(0,0,0,.08);
+.view-button:hover{
+    background:var(--red);
 }
 
-.details h2{
-    font-size:24px;
-    margin-bottom:5px;
+/* =========================================================
+   DETAIL PANEL
+   ========================================================= */
+
+.detail-panel{
+    background:#17171c;
+
+    border-radius:9px;
+
+    overflow:hidden;
+
+    position:sticky;
+
+    top:15px;
+
+    height:max-content;
+
+    box-shadow:
+        0 20px 45px rgba(0,0,0,.17);
 }
 
-.detail-sub{
-    color:#68798b;
-    margin-bottom:15px;
+.detail-header{
+    padding:19px 20px;
+
+    position:relative;
+
+    border-bottom:
+        1px solid #303038;
 }
 
-.detail-img{
-    width:100%;
+.detail-header::before{
+    content:"";
+
+    position:absolute;
+
+    top:0;
+    left:0;
+
+    width:55px;
+    height:3px;
+
+    background:var(--red);
+}
+
+.detail-small{
+    color:var(--red);
+
+    font-size:9px;
+
+    letter-spacing:2px;
+
+    font-weight:bold;
+}
+
+.detail-name{
+    color:white;
+
+    font-size:27px;
+
+    font-weight:900;
+
+    margin-top:6px;
+}
+
+.detail-type{
+    color:#85858e;
+
+    font-size:11px;
+
+    margin-top:4px;
+}
+
+.detail-image{
     height:230px;
+
+    background:
+        linear-gradient(
+            145deg,
+            #f8f8f9,
+            #e7e7ea
+        );
+
+    display:flex;
+    align-items:center;
+    justify-content:center;
+
+    position:relative;
+}
+
+.detail-image img{
+    max-width:90%;
+    max-height:195px;
+
     object-fit:contain;
-    background:#f7f9fc;
-    border-radius:10px;
-    margin-bottom:15px;
+}
+
+.detail-content{
+    padding:18px 20px 22px;
+}
+
+.detail-rating{
+    display:flex;
+    align-items:flex-end;
+    justify-content:space-between;
+
+    padding-bottom:15px;
+
+    border-bottom:
+        1px solid #303038;
+}
+
+.detail-rating small{
+    color:#777780;
+
+    font-size:9px;
+
+    text-transform:uppercase;
+
+    letter-spacing:1px;
+}
+
+.detail-rating strong{
+    display:block;
+
+    color:white;
+
+    margin-top:3px;
+
+    font-size:14px;
+}
+
+.big-rating{
+    color:var(--red);
+
+    font-size:24px;
+
+    font-weight:900;
+}
+
+/* =========================================================
+   DETAIL SPECS
+   ========================================================= */
+
+.spec-list{
+    margin-top:9px;
 }
 
 .spec-row{
     display:flex;
+
     justify-content:space-between;
+
     padding:9px 0;
-    border-bottom:1px solid #edf1f5;
+
+    border-bottom:
+        1px solid #29292f;
 }
 
-.spec-label{
-    color:#738397;
+.spec-name{
+    color:#74747d;
+
+    font-size:10px;
 }
 
-.spec-value{
+.spec-data{
+    color:#dedee3;
+
+    font-size:10px;
+
     font-weight:bold;
+
+    text-align:right;
 }
 
-.big-button{
-    display:block;
+.datasheet{
+    margin-top:17px;
+
     width:100%;
-    margin-top:18px;
-    padding:14px;
+
+    height:46px;
+
     border:none;
-    background:#063b62;
+
+    background:var(--red);
+
     color:white;
-    border-radius:8px;
-    font-weight:bold;
-    font-size:14px;
+
+    border-radius:5px;
+
+    font-size:11px;
+
+    font-weight:900;
+
+    letter-spacing:.8px;
+
     cursor:pointer;
+
+    transition:.2s;
+}
+
+.datasheet:hover{
+    background:#ff2638;
+
+    transform:translateY(-1px);
 }
 
 .description{
-    margin-top:20px;
+    margin-top:17px;
 }
 
-.description h3{
-    margin-bottom:8px;
+.description-title{
+    color:white;
+
+    font-size:11px;
+
+    font-weight:bold;
+
+    margin-bottom:7px;
 }
 
 .description p{
-    color:#5e6d7e;
-    line-height:1.5;
-    font-size:14px;
+    color:#808089;
+
+    font-size:10px;
+
+    line-height:1.65;
 }
 
-@media(max-width:1100px){
+/* =========================================================
+   EMPTY STATE
+   ========================================================= */
+
+.empty{
+    grid-column:1/-1;
+
+    background:white;
+
+    padding:60px 20px;
+
+    text-align:center;
+
+    border-radius:8px;
+
+    color:#888891;
+}
+
+/* =========================================================
+   RESPONSIVE
+   ========================================================= */
+
+@media(max-width:1300px){
+
     .generator-grid{
-        grid-template-columns:repeat(2,1fr);
+        grid-template-columns:
+            repeat(2,1fr);
     }
 
-    .kpi-grid{
-        grid-template-columns:repeat(2,1fr);
-    }
 }
+
+@media(max-width:1050px){
+
+    .sidebar{
+        width:210px;
+    }
+
+    .main{
+        width:calc(100% - 210px);
+        margin-left:210px;
+    }
+
+    .workspace{
+        grid-template-columns:1fr;
+    }
+
+    .detail-panel{
+        position:relative;
+    }
+
+    .filters{
+        grid-template-columns:
+            repeat(2,1fr);
+    }
+
+}
+
+@media(max-width:760px){
+
+    .sidebar{
+        display:none;
+    }
+
+    .main{
+        width:100%;
+        margin-left:0;
+    }
+
+    .hero{
+        height:auto;
+    }
+
+    .hero-content{
+        flex-direction:column;
+        align-items:flex-start;
+        gap:25px;
+    }
+
+    .hero-search{
+        width:100%;
+    }
+
+    .stats{
+        grid-template-columns:
+            repeat(2,1fr);
+
+        margin-top:15px;
+    }
+
+    .generator-grid{
+        grid-template-columns:1fr;
+    }
+
+    .filters{
+        grid-template-columns:1fr;
+    }
+
+}
+
 </style>
 </head>
 
 <body>
 
-<!-- SIDEBAR -->
+<div class="app">
 
-<div class="sidebar">
+<!-- ======================================================
+     SIDEBAR
+     ====================================================== -->
 
-    <div class="logo">VEGA</div>
-    <div class="logo-sub">ENGINEERING SOLUTIONS</div>
+<aside class="sidebar">
 
-    <div class="menu-item active">⌂ &nbsp; Generator Hub</div>
-    <div class="menu-item">▦ &nbsp; Generator Library</div>
-    <div class="menu-item">▤ &nbsp; Categories</div>
-    <div class="menu-item">★ &nbsp; Brands</div>
-    <div class="menu-item">$ &nbsp; Price List</div>
-    <div class="menu-item">▧ &nbsp; Datasheets</div>
-    <div class="menu-item">⇄ &nbsp; Compare</div>
+    <div class="brand">
 
-    <div class="sidebar-bottom">
-        POWER<br>
-        GENERATION<br>
-        SOLUTIONS
+        <div class="vega-logo">
+
+            <div class="v-symbol"></div>
+
+            <div>
+                <div class="brand-name">
+                    Vega<span>Power</span>
+                </div>
+
+                <div class="brand-sub">
+                    ENGINEERING SOLUTIONS
+                </div>
+            </div>
+
+        </div>
+
     </div>
 
-</div>
 
-<!-- MAIN -->
+    <nav class="navigation">
 
-<div class="main">
+        <div class="nav-title">
+            POWER INTELLIGENCE
+        </div>
 
-    <div class="header">
-
-        <div>
-            <h1>GENERATOR HUB</h1>
-            <div class="header-sub">
-                SEARCH &nbsp; | &nbsp; FILTER &nbsp; | &nbsp;
-                EXPLORE &nbsp; | &nbsp; GET DATASHEET
+        <div class="nav-item active">
+            <div class="nav-icon">⌂</div>
+            <div class="nav-text">
+                Generator Hub
             </div>
         </div>
 
+        <div class="nav-item">
+            <div class="nav-icon">▦</div>
+            <div class="nav-text">
+                Generator Library
+            </div>
+        </div>
+
+        <div class="nav-item">
+            <div class="nav-icon">⌕</div>
+            <div class="nav-text">
+                Smart Search
+            </div>
+        </div>
+
+        <div class="nav-item">
+            <div class="nav-icon">⇄</div>
+            <div class="nav-text">
+                Compare
+            </div>
+        </div>
+
+        <div class="nav-item">
+            <div class="nav-icon">▤</div>
+            <div class="nav-text">
+                Datasheets
+            </div>
+        </div>
+
+        <div class="nav-item">
+            <div class="nav-icon">⚙</div>
+            <div class="nav-text">
+                Technical Data
+            </div>
+        </div>
+
+        <div class="nav-item">
+            <div class="nav-icon">◇</div>
+            <div class="nav-text">
+                Fuel Systems
+            </div>
+        </div>
+
+    </nav>
+
+
+    <div class="side-footer">
+
+        <div class="side-line"></div>
+
+        <div class="side-slogan">
+
+            ENGINEERED FOR<br>
+
+            <strong>
+                RELIABILITY.
+            </strong>
+
+            <br><br>
+
+            BUILT FOR<br>
+
+            <strong>
+                CONTINUITY.
+            </strong>
+
+        </div>
+
+    </div>
+
+</aside>
+
+
+<!-- ======================================================
+     MAIN
+     ====================================================== -->
+
+<main class="main">
+
+
+<!-- HERO -->
+
+<section class="hero">
+
+    <div class="topbar">
+
+        <div class="company-label">
+            VEGA ENGINEERING SOLUTIONS CO. LTD.
+        </div>
+
+        <div class="system-status">
+
+            <span class="status-dot"></span>
+
+            GENERATOR DATABASE ONLINE
+
+        </div>
+
+    </div>
+
+
+    <div class="hero-content">
+
+        <div>
+
+            <div class="eyebrow">
+                POWER GENERATION INTELLIGENCE
+            </div>
+
+            <h1>
+                GENERATOR
+                <span>HUB</span>
+            </h1>
+
+            <div class="hero-description">
+
+                Centralized technical library for VEGA generator
+                selection, comparison, technical data and
+                manufacturer documentation.
+
+            </div>
+
+        </div>
+
+
+        <div class="hero-search">
+
+            <div class="search-label">
+                SMART GENERATOR SEARCH
+            </div>
+
+            <div class="search-box">
+
+                <div class="search-icon">
+                    ⌕
+                </div>
+
+                <input
+                    id="mainSearch"
+                    type="text"
+                    placeholder="Search model, engine, alternator, kVA..."
+                    oninput="applyFilters()"
+                >
+
+                <div class="search-shortcut">
+                    SEARCH
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</section>
+
+
+<!-- ======================================================
+     CONTENT
+     ====================================================== -->
+
+<div class="content">
+
+
+<!-- KPI -->
+
+<section class="stats">
+
+    <div class="stat">
+
+        <div class="stat-icon">
+            ▣
+        </div>
+
+        <div>
+
+            <div class="stat-label">
+                Generator Models
+            </div>
+
+            <div
+                class="stat-number"
+                id="totalModels">
+                0
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <div class="stat">
+
+        <div class="stat-icon">
+            ◈
+        </div>
+
+        <div>
+
+            <div class="stat-label">
+                Engine Brands
+            </div>
+
+            <div
+                class="stat-number"
+                id="totalBrands">
+                0
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <div class="stat">
+
+        <div class="stat-icon">
+            ⚡
+        </div>
+
+        <div>
+
+            <div class="stat-label">
+                Power Range
+            </div>
+
+            <div
+                class="stat-number"
+                id="powerRange">
+                -
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <div class="stat">
+
+        <div class="stat-icon">
+            ▤
+        </div>
+
+        <div>
+
+            <div class="stat-label">
+                Datasheets
+            </div>
+
+            <div
+                class="stat-number"
+                id="datasheetCount">
+                0
+            </div>
+
+        </div>
+
+    </div>
+
+</section>
+
+
+<!-- FILTERS -->
+
+<section class="filters">
+
+    <div class="filter">
+
+        <label>
+            Engine Brand
+        </label>
+
+        <select
+            id="brandFilter"
+            onchange="applyFilters()"
+        >
+            <option value="">
+                All Brands
+            </option>
+        </select>
+
+    </div>
+
+
+    <div class="filter">
+
+        <label>
+            Power Range
+        </label>
+
+        <select
+            id="powerFilter"
+            onchange="applyFilters()"
+        >
+
+            <option value="">
+                All Ratings
+            </option>
+
+            <option value="0-100">
+                Up to 100 kVA
+            </option>
+
+            <option value="101-500">
+                101 – 500 kVA
+            </option>
+
+            <option value="501-1000">
+                501 – 1000 kVA
+            </option>
+
+            <option value="1001-99999">
+                Above 1000 kVA
+            </option>
+
+        </select>
+
+    </div>
+
+
+    <div class="filter">
+
+        <label>
+            Alternator
+        </label>
+
+        <select
+            id="alternatorFilter"
+            onchange="applyFilters()"
+        >
+
+            <option value="">
+                All Alternators
+            </option>
+
+        </select>
+
+    </div>
+
+
+    <div class="filter">
+
+        <label>
+            Frequency
+        </label>
+
+        <select
+            id="frequencyFilter"
+            onchange="applyFilters()"
+        >
+
+            <option value="">
+                All
+            </option>
+
+            <option value="50">
+                50 Hz
+            </option>
+
+            <option value="60">
+                60 Hz
+            </option>
+
+        </select>
+
+    </div>
+
+
+    <div class="filter">
+
+        <label>
+            Quick Search
+        </label>
+
         <input
-            class="top-search"
-            id="search"
+            id="quickSearch"
             type="text"
-            placeholder="Search generator, engine, alternator or model..."
-            onkeyup="filterGenerators()"
+            placeholder="VPC680, KTA50, Stamford..."
+            oninput="syncSearch(this.value)"
         >
 
     </div>
 
-    <div class="content">
+</section>
 
-        <!-- KPI -->
 
-        <div class="kpi-grid">
+<!-- SECTION HEADER -->
 
-            <div class="kpi">
-                <div class="kpi-title">Total Generators</div>
-                <div class="kpi-value" id="totalGenerators">6</div>
-            </div>
+<div class="section-head">
 
-            <div class="kpi">
-                <div class="kpi-title">Total Brands</div>
-                <div class="kpi-value">4</div>
-            </div>
+    <div>
 
-            <div class="kpi">
-                <div class="kpi-title">Power Range</div>
-                <div class="kpi-value">35–2000</div>
-            </div>
-
-            <div class="kpi">
-                <div class="kpi-title">Datasheets</div>
-                <div class="kpi-value">6</div>
-            </div>
-
+        <div class="section-eyebrow">
+            VEGA POWER
         </div>
 
-        <!-- FILTER -->
-
-        <div class="filters">
-
-            <div class="filter-box">
-                <label>Generator Brand</label>
-                <select id="brandFilter" onchange="filterGenerators()">
-                    <option value="">All</option>
-                    <option>Cummins</option>
-                    <option>Volvo</option>
-                    <option>John Deere</option>
-                    <option>Kubota</option>
-                </select>
-            </div>
-
-            <div class="filter-box">
-                <label>Power Rating</label>
-                <select>
-                    <option>All Ratings</option>
-                    <option>0 – 100 kVA</option>
-                    <option>101 – 500 kVA</option>
-                    <option>501 – 1000 kVA</option>
-                    <option>1000+ kVA</option>
-                </select>
-            </div>
-
-            <div class="filter-box">
-                <label>Application</label>
-                <select>
-                    <option>All</option>
-                    <option>Standby</option>
-                    <option>Prime</option>
-                </select>
-            </div>
-
-            <div class="filter-box">
-                <label>Quick Search</label>
-                <input
-                    type="text"
-                    placeholder="Model, engine, alternator..."
-                    onkeyup="syncSearch(this.value)"
-                >
-            </div>
-
-        </div>
-
-        <!-- WORKSPACE -->
-
-        <div class="workspace">
-
-            <div class="generator-grid" id="generatorGrid"></div>
-
-            <div class="details">
-
-                <span class="tag" id="detailTag">Cummins</span>
-
-                <h2 id="detailName">VPC680</h2>
-
-                <div class="detail-sub" id="detailTitle">
-                    Diesel Generator Set
-                </div>
-
-                <img
-                    id="detailImage"
-                    class="detail-img"
-                    src="https://via.placeholder.com/500x300?text=Generator"
-                >
-
-                <div class="spec-row">
-                    <span class="spec-label">Standby Rating</span>
-                    <span class="spec-value" id="detailKva">680 kVA</span>
-                </div>
-
-                <div class="spec-row">
-                    <span class="spec-label">Engine</span>
-                    <span class="spec-value" id="detailEngine">
-                        Cummins
-                    </span>
-                </div>
-
-                <div class="spec-row">
-                    <span class="spec-label">Alternator</span>
-                    <span class="spec-value" id="detailAlternator">
-                        Stamford
-                    </span>
-                </div>
-
-                <div class="spec-row">
-                    <span class="spec-label">Frequency</span>
-                    <span class="spec-value">60 Hz</span>
-                </div>
-
-                <div class="spec-row">
-                    <span class="spec-label">Power Factor</span>
-                    <span class="spec-value">0.8</span>
-                </div>
-
-                <button class="big-button">
-                    VIEW DATASHEET ↗
-                </button>
-
-                <div class="description">
-
-                    <h3>Description</h3>
-
-                    <p id="detailDescription">
-                        Industrial diesel generator set designed for
-                        reliable standby and prime power applications.
-                    </p>
-
-                </div>
-
-            </div>
-
+        <div class="section-title">
+            Generator Library
         </div>
 
     </div>
 
+    <div
+        class="results"
+        id="resultCount">
+    </div>
+
 </div>
+
+
+<!-- ======================================================
+     WORKSPACE
+     ====================================================== -->
+
+<div class="workspace">
+
+
+<!-- GENERATORS -->
+
+<div
+    class="generator-grid"
+    id="generatorGrid">
+</div>
+
+
+<!-- DETAIL -->
+
+<aside class="detail-panel">
+
+    <div class="detail-header">
+
+        <div class="detail-small">
+            SELECTED GENERATOR
+        </div>
+
+        <div
+            class="detail-name"
+            id="detailName">
+            —
+        </div>
+
+        <div
+            class="detail-type"
+            id="detailSeries">
+            Select a generator
+        </div>
+
+    </div>
+
+
+    <div
+        class="detail-image"
+        id="detailImageArea">
+
+        <div class="no-image">
+            GENSET
+        </div>
+
+    </div>
+
+
+    <div class="detail-content">
+
+
+        <div class="detail-rating">
+
+            <div>
+
+                <small>
+                    Engine Brand
+                </small>
+
+                <strong
+                    id="detailBrand">
+                    —
+                </strong>
+
+            </div>
+
+            <div
+                class="big-rating"
+                id="detailKva">
+                —
+            </div>
+
+        </div>
+
+
+        <div class="spec-list">
+
+
+            <div class="spec-row">
+
+                <span class="spec-name">
+                    Engine
+                </span>
+
+                <span
+                    class="spec-data"
+                    id="detailEngine">
+                    —
+                </span>
+
+            </div>
+
+
+            <div class="spec-row">
+
+                <span class="spec-name">
+                    Alternator
+                </span>
+
+                <span
+                    class="spec-data"
+                    id="detailAlternator">
+                    —
+                </span>
+
+            </div>
+
+
+            <div class="spec-row">
+
+                <span class="spec-name">
+                    Standby Rating
+                </span>
+
+                <span
+                    class="spec-data"
+                    id="detailStandby">
+                    —
+                </span>
+
+            </div>
+
+
+            <div class="spec-row">
+
+                <span class="spec-name">
+                    Prime Rating
+                </span>
+
+                <span
+                    class="spec-data"
+                    id="detailPrime">
+                    —
+                </span>
+
+            </div>
+
+
+            <div class="spec-row">
+
+                <span class="spec-name">
+                    Frequency
+                </span>
+
+                <span
+                    class="spec-data"
+                    id="detailFrequency">
+                    —
+                </span>
+
+            </div>
+
+
+            <div class="spec-row">
+
+                <span class="spec-name">
+                    Power Factor
+                </span>
+
+                <span class="spec-data">
+                    0.8
+                </span>
+
+            </div>
+
+
+        </div>
+
+
+        <button
+            class="datasheet"
+            id="datasheetButton"
+            onclick="openDatasheet()"
+        >
+
+            VIEW TECHNICAL DATASHEET ↗
+
+        </button>
+
+
+        <div class="description">
+
+            <div class="description-title">
+                Technical Overview
+            </div>
+
+            <p
+                id="detailDescription">
+
+                Select a generator from the library
+                to display its technical information.
+
+            </p>
+
+        </div>
+
+
+    </div>
+
+</aside>
+
+
+</div>
+
+</div>
+
+</main>
+
+</div>
+
+
+<!-- ======================================================
+     JAVASCRIPT DATABASE
+     ====================================================== -->
 
 <script>
 
-/* ================= DATABASE ================= */
+/*
+============================================================
+VEGA GENERATOR DATABASE
+
+Later we can move this data to:
+- Google Sheets
+- Excel
+- JSON
+- Firebase
+- Supabase
+============================================================
+*/
 
 const generators = [
 
 {
-    name:"VPC680",
-    brand:"Cummins",
-    kva:"680 kVA",
-    engine:"Cummins",
-    alternator:"Stamford",
-    description:"Industrial diesel generator set for standby and prime power applications.",
-    image:"https://via.placeholder.com/400x250?text=VPC680"
-},
-
-{
-    name:"VPC570",
-    brand:"Cummins",
-    kva:"570 kVA",
-    engine:"Cummins",
-    alternator:"Stamford",
-    description:"High-performance diesel generator package.",
-    image:"https://via.placeholder.com/400x250?text=VPC570"
-},
-
-{
-    name:"VPD320",
+    model:"VPD35",
+    series:"VEGA Diesel Generator",
     brand:"John Deere",
-    kva:"320 kVA",
+    standby:35,
+    prime:32,
     engine:"John Deere",
     alternator:"Leroy Somer",
-    description:"Reliable generator set for commercial and industrial applications.",
-    image:"https://via.placeholder.com/400x250?text=VPD320"
+    frequency:50,
+    image:"",
+    datasheet:"",
+    description:
+    "VEGA diesel generator package engineered for reliable standby and prime power applications."
 },
 
 {
-    name:"VPV450",
+    model:"VPC90",
+    series:"VEGA Diesel Generator",
+    brand:"Cummins",
+    standby:90,
+    prime:82,
+    engine:"Cummins",
+    alternator:"Stamford",
+    frequency:50,
+    image:"",
+    datasheet:"",
+    description:
+    "Compact Cummins-powered generator package suitable for commercial and industrial applications."
+},
+
+{
+    model:"VPD320",
+    series:"VEGA Diesel Generator",
+    brand:"John Deere",
+    standby:320,
+    prime:290,
+    engine:"John Deere",
+    alternator:"Leroy Somer",
+    frequency:50,
+    image:"",
+    datasheet:"",
+    description:
+    "Industrial generator set combining John Deere engine technology with a professional VEGA generator package."
+},
+
+{
+    model:"VPV450",
+    series:"VEGA Diesel Generator",
     brand:"Volvo",
-    kva:"450 kVA",
+    standby:450,
+    prime:410,
     engine:"Volvo Penta",
     alternator:"Stamford",
-    description:"Volvo powered industrial generator set.",
-    image:"https://via.placeholder.com/400x250?text=VPV450"
+    frequency:50,
+    image:"",
+    datasheet:"",
+    description:
+    "Volvo-powered generator package developed for demanding standby and prime power installations."
 },
 
 {
-    name:"VPC1400",
+    model:"VPC570",
+    series:"VEGA Diesel Generator",
     brand:"Cummins",
-    kva:"1400 kVA",
+    standby:570,
+    prime:520,
+    engine:"Cummins",
+    alternator:"Stamford",
+    frequency:50,
+    image:"",
+    datasheet:"",
+    description:
+    "Heavy-duty Cummins generator package engineered for reliable commercial and industrial power."
+},
+
+{
+    model:"VPC680",
+    series:"VEGA Diesel Generator",
+    brand:"Cummins",
+    standby:680,
+    prime:620,
+    engine:"Cummins",
+    alternator:"Stamford",
+    frequency:50,
+    image:"",
+    datasheet:"",
+    description:
+    "High-capacity VEGA generator package designed for critical standby and prime power applications."
+},
+
+{
+    model:"VPC1400",
+    series:"VEGA Diesel Generator",
+    brand:"Cummins",
+    standby:1400,
+    prime:1275,
     engine:"KTA50-G3",
     alternator:"Leroy Somer",
-    description:"Heavy-duty generator for large industrial facilities.",
-    image:"https://via.placeholder.com/400x250?text=VPC1400"
+    frequency:50,
+    image:"",
+    datasheet:"",
+    description:
+    "Large industrial generator package for high-demand power generation applications."
 },
 
 {
-    name:"VPK35",
-    brand:"Kubota",
-    kva:"35 kVA",
-    engine:"Kubota",
+    model:"VPC2000",
+    series:"VEGA Diesel Generator",
+    brand:"Cummins",
+    standby:2000,
+    prime:1800,
+    engine:"Cummins",
     alternator:"Stamford",
-    description:"Compact diesel generator for light-duty applications.",
-    image:"https://via.placeholder.com/400x250?text=VPK35"
+    frequency:50,
+    image:"",
+    datasheet:"",
+    description:
+    "High-output generator solution intended for large infrastructure and critical-power installations."
 }
 
 ];
 
 
-/* ================= DISPLAY ================= */
+/* =========================================================
+   STATE
+   ========================================================= */
+
+let selectedGenerator = generators[0];
+
+
+/* =========================================================
+   INITIALIZE FILTERS
+   ========================================================= */
+
+function initializeFilters(){
+
+    const brands =
+        [...new Set(
+            generators.map(g => g.brand)
+        )].sort();
+
+
+    const alternators =
+        [...new Set(
+            generators.map(g => g.alternator)
+        )].sort();
+
+
+    const brandSelect =
+        document.getElementById(
+            "brandFilter"
+        );
+
+
+    brands.forEach(brand => {
+
+        const option =
+            document.createElement(
+                "option"
+            );
+
+        option.value = brand;
+
+        option.textContent = brand;
+
+        brandSelect.appendChild(option);
+
+    });
+
+
+    const alternatorSelect =
+        document.getElementById(
+            "alternatorFilter"
+        );
+
+
+    alternators.forEach(alt => {
+
+        const option =
+            document.createElement(
+                "option"
+            );
+
+        option.value = alt;
+
+        option.textContent = alt;
+
+        alternatorSelect.appendChild(option);
+
+    });
+
+}
+
+
+/* =========================================================
+   KPI
+   ========================================================= */
+
+function updateKPIs(){
+
+    document.getElementById(
+        "totalModels"
+    ).textContent =
+        generators.length;
+
+
+    const brands =
+        new Set(
+            generators.map(g => g.brand)
+        );
+
+
+    document.getElementById(
+        "totalBrands"
+    ).textContent =
+        brands.size;
+
+
+    const ratings =
+        generators.map(
+            g => g.standby
+        );
+
+
+    const min =
+        Math.min(...ratings);
+
+
+    const max =
+        Math.max(...ratings);
+
+
+    document.getElementById(
+        "powerRange"
+    ).textContent =
+        min + "–" + max;
+
+
+    const sheets =
+        generators.filter(
+            g => g.datasheet
+        ).length;
+
+
+    document.getElementById(
+        "datasheetCount"
+    ).textContent =
+        sheets;
+
+}
+
+
+/* =========================================================
+   CARD IMAGE
+   ========================================================= */
+
+function imageHTML(generator){
+
+    if(generator.image){
+
+        return `
+        <img
+            class="generator-img"
+            src="${generator.image}"
+            alt="${generator.model}"
+            onerror="
+                this.style.display='none';
+                this.nextElementSibling.style.display='flex';
+            "
+        >
+
+        <div
+            class="no-image"
+            style="display:none;">
+            GENSET
+        </div>
+        `;
+
+    }
+
+
+    return `
+    <div class="no-image">
+        GENSET
+    </div>
+    `;
+
+}
+
+
+/* =========================================================
+   DISPLAY GENERATORS
+   ========================================================= */
 
 function displayGenerators(data){
 
     const grid =
-        document.getElementById("generatorGrid");
+        document.getElementById(
+            "generatorGrid"
+        );
+
 
     grid.innerHTML = "";
 
-    data.forEach((gen,index)=>{
 
-        const card =
-        document.createElement("div");
+    document.getElementById(
+        "resultCount"
+    ).textContent =
+        data.length +
+        " generator model" +
+        (data.length === 1 ? "" : "s");
 
-        card.className="generator-card";
 
-        card.onclick =
-        ()=>showDetails(gen);
+    if(data.length === 0){
 
-        card.innerHTML=`
+        grid.innerHTML = `
 
-        <span class="tag">
-        ${gen.brand}
-        </span>
+        <div class="empty">
 
-        <img
-        class="generator-img"
-        src="${gen.image}"
-        >
-
-        <div class="generator-name">
-        ${gen.name}
-        </div>
-
-        <div class="generator-desc">
-        ${gen.engine}
-        •
-        ${gen.alternator}
-        </div>
-
-        <div class="price">
-        ${gen.kva}
-
-        <button class="datasheet-btn">
-        DATASHEET
-        </button>
+            No generators match
+            your current search.
 
         </div>
 
         `;
 
+        return;
+
+    }
+
+
+    data.forEach(generator => {
+
+
+        const card =
+            document.createElement(
+                "article"
+            );
+
+
+        card.className =
+            "generator-card";
+
+
+        card.onclick = () =>
+            showGenerator(generator);
+
+
+        card.innerHTML = `
+
+        <div class="card-top">
+
+            <div class="brand-tag">
+                ${generator.brand}
+            </div>
+
+            <div class="rating-tag">
+                ${generator.standby} kVA
+            </div>
+
+            ${imageHTML(generator)}
+
+        </div>
+
+
+        <div class="card-body">
+
+
+            <div class="card-code">
+                ${generator.model}
+            </div>
+
+
+            <div class="card-series">
+                ${generator.series}
+            </div>
+
+
+            <div class="card-specs">
+
+
+                <div class="mini-spec">
+
+                    <div class="mini-label">
+                        Engine
+                    </div>
+
+                    <div class="mini-value">
+                        ${generator.engine}
+                    </div>
+
+                </div>
+
+
+                <div class="mini-spec">
+
+                    <div class="mini-label">
+                        Alternator
+                    </div>
+
+                    <div class="mini-value">
+                        ${generator.alternator}
+                    </div>
+
+                </div>
+
+
+            </div>
+
+
+            <div class="card-footer">
+
+                <div class="kva">
+
+                    ${generator.standby}
+                    <small>
+                        kVA
+                    </small>
+
+                </div>
+
+
+                <button
+                    class="view-button"
+                    onclick="
+                        event.stopPropagation();
+                        showGeneratorByModel(
+                            '${generator.model}'
+                        );
+                    "
+                >
+
+                    VIEW DETAILS
+
+                </button>
+
+            </div>
+
+        </div>
+
+        `;
+
+
         grid.appendChild(card);
 
     });
 
-    document.getElementById(
-        "totalGenerators"
-    ).innerText=data.length;
-
 }
 
 
-/* ================= DETAILS ================= */
+/* =========================================================
+   DETAIL PANEL
+   ========================================================= */
 
-function showDetails(gen){
+function showGenerator(generator){
 
-    document.getElementById(
-        "detailTag"
-    ).innerText=gen.brand;
+    selectedGenerator =
+        generator;
+
 
     document.getElementById(
         "detailName"
-    ).innerText=gen.name;
+    ).textContent =
+        generator.model;
+
+
+    document.getElementById(
+        "detailSeries"
+    ).textContent =
+        generator.series;
+
+
+    document.getElementById(
+        "detailBrand"
+    ).textContent =
+        generator.brand;
+
 
     document.getElementById(
         "detailKva"
-    ).innerText=gen.kva;
+    ).textContent =
+        generator.standby +
+        " kVA";
+
 
     document.getElementById(
         "detailEngine"
-    ).innerText=gen.engine;
+    ).textContent =
+        generator.engine;
+
 
     document.getElementById(
         "detailAlternator"
-    ).innerText=gen.alternator;
+    ).textContent =
+        generator.alternator;
+
+
+    document.getElementById(
+        "detailStandby"
+    ).textContent =
+        generator.standby +
+        " kVA";
+
+
+    document.getElementById(
+        "detailPrime"
+    ).textContent =
+        generator.prime +
+        " kVA";
+
+
+    document.getElementById(
+        "detailFrequency"
+    ).textContent =
+        generator.frequency +
+        " Hz";
+
 
     document.getElementById(
         "detailDescription"
-    ).innerText=gen.description;
-
-    document.getElementById(
-        "detailImage"
-    ).src=gen.image;
-
-}
+    ).textContent =
+        generator.description;
 
 
-/* ================= SEARCH ================= */
-
-function filterGenerators(){
-
-    const search =
-    document.getElementById(
-        "search"
-    ).value.toLowerCase();
-
-    const brand =
-    document.getElementById(
-        "brandFilter"
-    ).value;
-
-    const result =
-    generators.filter(gen=>{
-
-        const text =
-        (
-            gen.name+" "+
-            gen.brand+" "+
-            gen.engine+" "+
-            gen.alternator+" "+
-            gen.kva
-        ).toLowerCase();
-
-        const matchSearch =
-        text.includes(search);
-
-        const matchBrand =
-        !brand ||
-        gen.brand===brand;
-
-        return (
-            matchSearch &&
-            matchBrand
+    const imageArea =
+        document.getElementById(
+            "detailImageArea"
         );
 
-    });
 
-    displayGenerators(result);
+    if(generator.image){
+
+        imageArea.innerHTML = `
+
+        <img
+            src="${generator.image}"
+            alt="${generator.model}"
+            onerror="
+                this.parentElement.innerHTML =
+                '<div class=\\'no-image\\'>GENSET</div>';
+            "
+        >
+
+        `;
+
+    }
+
+    else{
+
+        imageArea.innerHTML = `
+
+        <div class="no-image">
+            GENSET
+        </div>
+
+        `;
+
+    }
+
+
+    const button =
+        document.getElementById(
+            "datasheetButton"
+        );
+
+
+    if(generator.datasheet){
+
+        button.textContent =
+            "VIEW TECHNICAL DATASHEET ↗";
+
+        button.style.opacity = "1";
+
+    }
+
+    else{
+
+        button.textContent =
+            "DATASHEET NOT ADDED";
+
+        button.style.opacity = ".45";
+
+    }
 
 }
 
+
+/* =========================================================
+   FIND GENERATOR
+   ========================================================= */
+
+function showGeneratorByModel(model){
+
+    const generator =
+        generators.find(
+            g => g.model === model
+        );
+
+
+    if(generator){
+
+        showGenerator(generator);
+
+    }
+
+}
+
+
+/* =========================================================
+   OPEN DATASHEET
+   ========================================================= */
+
+function openDatasheet(){
+
+    if(
+        selectedGenerator &&
+        selectedGenerator.datasheet
+    ){
+
+        window.open(
+            selectedGenerator.datasheet,
+            "_blank"
+        );
+
+    }
+
+}
+
+
+/* =========================================================
+   FILTERS
+   ========================================================= */
+
+function applyFilters(){
+
+    const search =
+        document.getElementById(
+            "mainSearch"
+        ).value
+        .trim()
+        .toLowerCase();
+
+
+    const brand =
+        document.getElementById(
+            "brandFilter"
+        ).value;
+
+
+    const alternator =
+        document.getElementById(
+            "alternatorFilter"
+        ).value;
+
+
+    const frequency =
+        document.getElementById(
+            "frequencyFilter"
+        ).value;
+
+
+    const power =
+        document.getElementById(
+            "powerFilter"
+        ).value;
+
+
+    const filtered =
+        generators.filter(g => {
+
+
+            const searchable =
+            `
+            ${g.model}
+            ${g.series}
+            ${g.brand}
+            ${g.engine}
+            ${g.alternator}
+            ${g.standby}
+            ${g.prime}
+            ${g.frequency}
+            ${g.description}
+            `.toLowerCase();
+
+
+            const searchMatch =
+                !search ||
+                searchable.includes(search);
+
+
+            const brandMatch =
+                !brand ||
+                g.brand === brand;
+
+
+            const alternatorMatch =
+                !alternator ||
+                g.alternator === alternator;
+
+
+            const frequencyMatch =
+                !frequency ||
+                String(g.frequency)
+                === frequency;
+
+
+            let powerMatch = true;
+
+
+            if(power){
+
+                const parts =
+                    power.split("-");
+
+
+                const min =
+                    Number(parts[0]);
+
+
+                const max =
+                    Number(parts[1]);
+
+
+                powerMatch =
+                    g.standby >= min &&
+                    g.standby <= max;
+
+            }
+
+
+            return (
+                searchMatch &&
+                brandMatch &&
+                alternatorMatch &&
+                frequencyMatch &&
+                powerMatch
+            );
+
+        });
+
+
+    displayGenerators(filtered);
+
+}
+
+
+/* =========================================================
+   QUICK SEARCH SYNC
+   ========================================================= */
 
 function syncSearch(value){
 
     document.getElementById(
-        "search"
-    ).value=value;
+        "mainSearch"
+    ).value = value;
 
-    filterGenerators();
+
+    applyFilters();
 
 }
 
 
-/* START */
+/* =========================================================
+   START APP
+   ========================================================= */
+
+initializeFilters();
+
+updateKPIs();
 
 displayGenerators(generators);
+
+showGenerator(generators[0]);
 
 </script>
 
