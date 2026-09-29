@@ -1,19 +1,36 @@
 /* =========================================================
-   VEGA FUEL SYSTEMS
-   APPLICATION ENGINE
+   VEGA ENGINEERING SOLUTIONS
+   FUEL SYSTEMS TECHNICAL LIBRARY
+   APPLICATION CONTROLLER
 ========================================================= */
 
 "use strict";
 
-const equipment = VEGA_EQUIPMENT;
+/* =========================================================
+   STATE
+========================================================= */
 
 const state = {
-  search: "",
-  category: "all",
-  brand: "all",
-  system: "all",
-  viewMode: "grid"
+  products: Array.isArray(window.equipmentData)
+    ? window.equipmentData
+    : typeof equipmentData !== "undefined"
+      ? equipmentData
+      : [],
+
+  filteredProducts: [],
+  currentProduct: null,
+
+  filters: {
+    search: "",
+    category: "all",
+    manufacturer: "all"
+  }
 };
+
+
+/* =========================================================
+   HELPERS
+========================================================= */
 
 const $ = (selector, parent = document) =>
   parent.querySelector(selector);
@@ -21,47 +38,14 @@ const $ = (selector, parent = document) =>
 const $$ = (selector, parent = document) =>
   [...parent.querySelectorAll(selector)];
 
-
-/* =========================================================
-   HELPERS
-========================================================= */
-
-function normalize(value) {
-  return String(value || "")
+function normalize(value = "") {
+  return String(value)
     .toLowerCase()
     .trim();
 }
 
-function unique(key) {
-  return [...new Set(
-    equipment
-      .map(item => item[key])
-      .filter(Boolean)
-  )].sort();
-}
-
-function productSearchText(product) {
-  return normalize([
-    product.id,
-    product.name,
-    product.brand,
-    product.model,
-    product.category,
-    product.system,
-    product.description,
-    product.origin,
-    ...(product.features || []),
-    ...Object.entries(product.specifications || {})
-      .flat()
-  ].join(" "));
-}
-
-function getProduct(id) {
-  return equipment.find(item => item.id === id);
-}
-
-function escapeHTML(value) {
-  return String(value || "")
+function escapeHTML(value = "") {
+  return String(value)
     .replaceAll("&", "&amp;")
     .replaceAll("<", "&lt;")
     .replaceAll(">", "&gt;")
@@ -69,256 +53,243 @@ function escapeHTML(value) {
     .replaceAll("'", "&#039;");
 }
 
-function showToast(message) {
-  const toast = $("#toast");
+function unique(values) {
+  return [...new Set(values.filter(Boolean))];
+}
 
-  if (!toast) return;
+function formatPrice(product) {
+  if (!product.price) {
+    return "Contact Sales";
+  }
 
-  toast.textContent = message;
-  toast.classList.add("show");
+  if (
+    typeof product.price === "number" ||
+    /^\d+(\.\d+)?$/.test(String(product.price))
+  ) {
+    const currency = product.currency || "SAR";
 
-  clearTimeout(showToast.timer);
+    return `${Number(product.price).toLocaleString()} ${currency}`;
+  }
 
-  showToast.timer = setTimeout(() => {
-    toast.classList.remove("show");
-  }, 2200);
+  return product.price;
+}
+
+function safeImage(product) {
+  return product.image || "";
+}
+
+function safeDocuments(product) {
+  return Array.isArray(product.documents)
+    ? product.documents
+    : [];
+}
+
+function safeSpecifications(product) {
+  return product.specifications &&
+    typeof product.specifications === "object"
+    ? product.specifications
+    : {};
 }
 
 
 /* =========================================================
-   NAVIGATION
+   INITIALIZATION
 ========================================================= */
 
-function showView(name) {
+document.addEventListener("DOMContentLoaded", () => {
 
-  $$(".page-view").forEach(view => {
-    view.classList.toggle(
-      "active",
-      view.dataset.view === name
-    );
-  });
+  state.filteredProducts = [...state.products];
+
+  initializeNavigation();
+  initializeHeaderSearch();
+  initializeHeroSearch();
+  initializeQuickAccess();
+  initializeKeyboardShortcuts();
+  initializeProductPage();
+  initializeProductTabs();
+  initializeFilters();
+
+  populateFilters();
+
+  renderFeaturedProducts();
+  renderEquipmentLibrary();
+  renderDocuments();
+
+  updateProductCount();
+
+  handleHashRoute();
+
+  window.addEventListener("hashchange", handleHashRoute);
+
+});
+
+
+/* =========================================================
+   PAGE NAVIGATION
+========================================================= */
+
+function initializeNavigation() {
 
   $$(".nav-link").forEach(button => {
-    button.classList.toggle(
-      "active",
-      button.dataset.nav === name
-    );
+
+    button.addEventListener("click", () => {
+
+      const target =
+        button.dataset.page ||
+        button.getAttribute("data-target");
+
+      if (!target) return;
+
+      showPage(target);
+
+    });
+
   });
+
+
+  const brand = $(".brand");
+
+  if (brand) {
+    brand.addEventListener("click", () => {
+      showPage("home");
+    });
+  }
+
+
+  $("[data-open-library]")?.addEventListener("click", () => {
+    showPage("equipment");
+  });
+
+
+  $("[data-open-documents]")?.addEventListener("click", () => {
+    showPage("documents");
+  });
+
+}
+
+
+function showPage(pageName) {
+
+  closeProduct();
+
+  $$(".page-view").forEach(page => {
+    page.classList.remove("active");
+  });
+
+
+  let target =
+    document.querySelector(
+      `[data-page-view="${pageName}"]`
+    );
+
+
+  if (!target) {
+
+    const alternatives = {
+      home: [
+        "#homePage",
+        "#home",
+        ".home-page"
+      ],
+
+      equipment: [
+        "#equipmentPage",
+        "#libraryPage",
+        "#equipment",
+        ".library-page"
+      ],
+
+      documents: [
+        "#documentsPage",
+        "#documents",
+        ".documents-page"
+      ],
+
+      systems: [
+        "#systemsPage",
+        "#fuelSystemsPage",
+        ".systems-page"
+      ]
+    };
+
+
+    const selectors =
+      alternatives[pageName] || [];
+
+
+    for (const selector of selectors) {
+
+      target = $(selector);
+
+      if (target) break;
+
+    }
+
+  }
+
+
+  if (target) {
+    target.classList.add("active");
+  }
+
+
+  $$(".nav-link").forEach(link => {
+
+    const value =
+      link.dataset.page ||
+      link.getAttribute("data-target");
+
+    link.classList.toggle(
+      "active",
+      value === pageName
+    );
+
+  });
+
 
   window.scrollTo({
     top: 0,
     behavior: "smooth"
   });
+
 }
 
 
 /* =========================================================
-   PRODUCT PLACEHOLDER
+   FEATURED PRODUCTS
 ========================================================= */
 
-function productVisual(product) {
+function renderFeaturedProducts() {
 
-  if (product.image) {
-    return `
-      <img
-        src="${escapeHTML(product.image)}"
-        alt="${escapeHTML(product.name)}"
-        loading="lazy"
-      >
-    `;
-  }
-
-  return `
-    <div style="
-      width:100%;
-      height:100%;
-      display:flex;
-      flex-direction:column;
-      align-items:center;
-      justify-content:center;
-      gap:15px;
-      color:#a2a4a7;
-    ">
-      <img
-        src="assets/branding/vega-logo.png"
-        alt=""
-        style="
-          width:105px;
-          height:auto;
-          opacity:.13;
-        "
-      >
-
-      <span style="
-        font-size:8px;
-        letter-spacing:2px;
-      ">
-        PRODUCT IMAGE
-      </span>
-    </div>
-  `;
-}
-
-
-/* =========================================================
-   PRODUCT CARD
-========================================================= */
-
-function productCard(product) {
-
-  return `
-    <article
-      class="product-card"
-      data-product-id="${escapeHTML(product.id)}"
-      tabindex="0"
-    >
-
-      <div class="product-card-image">
-
-        <span class="product-card-index">
-          ${escapeHTML(product.id)}
-        </span>
-
-        ${productVisual(product)}
-
-      </div>
-
-      <div class="product-card-body">
-
-        <span class="product-card-brand">
-          ${escapeHTML(product.brand)}
-        </span>
-
-        <h3>
-          ${escapeHTML(product.name)}
-        </h3>
-
-        <div class="product-card-model">
-          ${escapeHTML(product.model)}
-        </div>
-
-        <div class="product-card-footer">
-
-          <strong>
-            ${escapeHTML(product.category)}
-          </strong>
-
-          <span>↗</span>
-
-        </div>
-
-      </div>
-
-    </article>
-  `;
-}
-
-
-/* =========================================================
-   FEATURED EQUIPMENT
-========================================================= */
-
-function renderFeatured() {
-
-  const container = $("#featuredProducts");
+  const container =
+    $("#featuredProducts") ||
+    $(".featured-products");
 
   if (!container) return;
 
+
   let products =
-    equipment.filter(item => item.featured);
+    state.products.filter(
+      product => product.featured
+    );
+
 
   if (!products.length) {
-    products = equipment.slice(0, 4);
+    products = state.products.slice(0, 4);
   }
+
 
   container.innerHTML =
     products
       .slice(0, 4)
-      .map(productCard)
+      .map((product, index) =>
+        productCardHTML(product, index)
+      )
       .join("");
 
+
   bindProductCards(container);
-}
 
-
-/* =========================================================
-   FILTERS
-========================================================= */
-
-function fillSelect(selector, values, label) {
-
-  const select = $(selector);
-
-  if (!select) return;
-
-  select.innerHTML = `
-    <option value="all">
-      ${label}
-    </option>
-
-    ${values.map(value => `
-      <option value="${escapeHTML(value)}">
-        ${escapeHTML(value)}
-      </option>
-    `).join("")}
-  `;
-}
-
-function initializeFilters() {
-
-  fillSelect(
-    "#categoryFilter",
-    unique("category"),
-    "All Categories"
-  );
-
-  fillSelect(
-    "#brandFilter",
-    unique("brand"),
-    "All Manufacturers"
-  );
-
-  fillSelect(
-    "#systemFilter",
-    unique("system"),
-    "All Systems"
-  );
-}
-
-
-/* =========================================================
-   EQUIPMENT FILTERING
-========================================================= */
-
-function filteredEquipment() {
-
-  const query = normalize(state.search);
-
-  return equipment.filter(product => {
-
-    const searchMatch =
-      !query ||
-      productSearchText(product).includes(query);
-
-    const categoryMatch =
-      state.category === "all" ||
-      product.category === state.category;
-
-    const brandMatch =
-      state.brand === "all" ||
-      product.brand === state.brand;
-
-    const systemMatch =
-      state.system === "all" ||
-      product.system === state.system;
-
-    return (
-      searchMatch &&
-      categoryMatch &&
-      brandMatch &&
-      systemMatch
-    );
-  });
 }
 
 
@@ -326,33 +297,130 @@ function filteredEquipment() {
    EQUIPMENT LIBRARY
 ========================================================= */
 
-function renderLibrary() {
+function renderEquipmentLibrary() {
 
-  const container = $("#equipmentGrid");
+  const container =
+    $("#equipmentGrid") ||
+    $(".equipment-grid");
 
   if (!container) return;
 
-  const products = filteredEquipment();
 
-  $("#resultCount").textContent =
-    products.length;
+  const products =
+    filterProducts();
 
-  const empty = $("#emptyState");
 
-  if (!products.length) {
+  state.filteredProducts = products;
 
-    container.innerHTML = "";
-    empty.style.display = "block";
-
-    return;
-  }
-
-  empty.style.display = "none";
 
   container.innerHTML =
-    products.map(productCard).join("");
+    products
+      .map((product, index) =>
+        productCardHTML(product, index)
+      )
+      .join("");
+
 
   bindProductCards(container);
+
+
+  const emptyState =
+    $("#emptyState") ||
+    $(".empty-state");
+
+
+  if (emptyState) {
+    emptyState.style.display =
+      products.length
+        ? "none"
+        : "block";
+  }
+
+
+  updateProductCount(products.length);
+
+}
+
+
+/* =========================================================
+   PRODUCT CARD TEMPLATE
+========================================================= */
+
+function productCardHTML(product, index = 0) {
+
+  const image = safeImage(product);
+
+  return `
+    <article
+      class="product-card"
+      data-product-id="${escapeHTML(product.id)}"
+      tabindex="0"
+      role="button"
+      aria-label="Open ${escapeHTML(product.name)}"
+    >
+
+      <div class="product-card-image">
+
+        <span class="product-card-index">
+          ${String(index + 1).padStart(2, "0")}
+        </span>
+
+        ${
+          image
+            ? `
+              <img
+                src="${escapeHTML(image)}"
+                alt="${escapeHTML(product.name)}"
+                loading="lazy"
+                onerror="this.style.display='none'"
+              >
+            `
+            : `
+              <div class="card-image-fallback">
+                VEGA
+              </div>
+            `
+        }
+
+      </div>
+
+
+      <div class="product-card-body">
+
+        <span class="product-card-brand">
+          ${escapeHTML(
+            product.manufacturer || "VEGA"
+          )}
+        </span>
+
+        <h3>
+          ${escapeHTML(product.name)}
+        </h3>
+
+        <span class="product-card-model">
+          ${escapeHTML(
+            product.model || "Project Specific"
+          )}
+        </span>
+
+
+        <div class="product-card-footer">
+
+          <strong>
+            ${escapeHTML(
+              product.category || "Fuel Systems"
+            )}
+          </strong>
+
+          <span>→</span>
+
+        </div>
+
+      </div>
+
+    </article>
+  `;
+
 }
 
 
@@ -360,285 +428,892 @@ function renderLibrary() {
    PRODUCT CARD EVENTS
 ========================================================= */
 
-function bindProductCards(parent = document) {
+function bindProductCards(container) {
 
-  $$("[data-product-id]", parent)
+  $$(".product-card", container)
     .forEach(card => {
 
-      card.addEventListener("click", () => {
-        openProduct(card.dataset.productId);
-      });
+      const open = () => {
 
-      card.addEventListener("keydown", event => {
+        const id =
+          card.dataset.productId;
 
-        if (
-          event.key === "Enter" ||
-          event.key === " "
-        ) {
-          event.preventDefault();
-          openProduct(card.dataset.productId);
+        openProduct(id);
+
+      };
+
+
+      card.addEventListener(
+        "click",
+        open
+      );
+
+
+      card.addEventListener(
+        "keydown",
+        event => {
+
+          if (
+            event.key === "Enter" ||
+            event.key === " "
+          ) {
+
+            event.preventDefault();
+
+            open();
+
+          }
+
         }
-
-      });
+      );
 
     });
+
 }
 
 
 /* =========================================================
-   OPEN PRODUCT
+   FILTER PRODUCTS
 ========================================================= */
 
-function openProduct(id) {
+function filterProducts() {
 
-  const product = getProduct(id);
+  const search =
+    normalize(state.filters.search);
 
-  if (!product) return;
+  const category =
+    normalize(state.filters.category);
 
-  $("#productCode").textContent =
-    product.id;
-
-  $("#productCategory").textContent =
-    product.category;
-
-  $("#productBrand").textContent =
-    product.brand;
-
-  $("#productName").textContent =
-    product.name;
-
-  $("#productDescription").textContent =
-    product.description || "";
-
-  $("#productModel").textContent =
-    product.model || "—";
-
-  $("#productOrigin").textContent =
-    product.origin || "—";
-
-  $("#productSystem").textContent =
-    product.system || "—";
-
-  $("#productPrice").textContent =
-    product.price || "Price on Request";
+  const manufacturer =
+    normalize(state.filters.manufacturer);
 
 
-  renderProductImages(product);
-  renderProductFeatures(product);
-  renderTechnicalData(product);
-  renderProductDocuments(product);
+  return state.products.filter(product => {
+
+    const searchableText = normalize([
+      product.id,
+      product.name,
+      product.model,
+      product.manufacturer,
+      product.category,
+      product.subcategory,
+      product.description,
+      ...Object.keys(
+        safeSpecifications(product)
+      ),
+      ...Object.values(
+        safeSpecifications(product)
+      )
+    ].join(" "));
 
 
-  const datasheetButton =
-    $("#productDatasheet");
+    const searchMatch =
+      !search ||
+      searchableText.includes(search);
 
-  datasheetButton.onclick = () => {
 
-    if (!product.datasheet) {
-      showToast(
-        "Datasheet has not been uploaded yet."
-      );
-      return;
-    }
+    const categoryMatch =
+      category === "all" ||
+      normalize(product.category) === category;
 
-    window.open(
-      product.datasheet,
-      "_blank",
-      "noopener,noreferrer"
+
+    const manufacturerMatch =
+      manufacturer === "all" ||
+      normalize(product.manufacturer) ===
+        manufacturer;
+
+
+    return (
+      searchMatch &&
+      categoryMatch &&
+      manufacturerMatch
     );
-  };
 
+  });
 
-  const page = $("#productPage");
-
-  page.classList.add("open");
-  page.setAttribute("aria-hidden", "false");
-
-  document.body.classList.add("no-scroll");
-
-  activateProductTab("overview");
-
-  page.scrollTop = 0;
 }
 
 
 /* =========================================================
-   PRODUCT IMAGES
+   FILTER CONTROLS
 ========================================================= */
 
-function renderProductImages(product) {
+function initializeFilters() {
 
-  const mainImage =
-    $("#productMainImage");
-
-  const placeholder =
-    $("#productImagePlaceholder");
-
-  const thumbnails =
-    $("#productThumbnails");
-
-  const images = [
-    product.image,
-    ...(product.images || [])
-  ].filter(Boolean);
+  const searchInput =
+    $("#librarySearch") ||
+    $(".library-search input");
 
 
-  if (!images.length) {
+  const categorySelect =
+    $("#categoryFilter");
 
-    mainImage.style.display = "none";
-    placeholder.style.display = "grid";
-    thumbnails.innerHTML = "";
 
-    return;
+  const manufacturerSelect =
+    $("#manufacturerFilter");
+
+
+  const resetButton =
+    $("#resetFilters") ||
+    $(".reset-filter");
+
+
+  if (searchInput) {
+
+    searchInput.addEventListener(
+      "input",
+      event => {
+
+        state.filters.search =
+          event.target.value;
+
+        renderEquipmentLibrary();
+
+      }
+    );
+
   }
 
 
-  mainImage.style.display = "block";
-  placeholder.style.display = "none";
+  if (categorySelect) {
 
-  mainImage.src = images[0];
-  mainImage.alt = product.name;
+    categorySelect.addEventListener(
+      "change",
+      event => {
 
+        state.filters.category =
+          event.target.value;
 
-  thumbnails.innerHTML =
-    images.map((image, index) => `
+        renderEquipmentLibrary();
 
-      <button
-        class="product-thumb"
-        data-product-image="${escapeHTML(image)}"
-        style="
-          width:76px;
-          height:76px;
-          background:white;
-          border:${index === 0
-            ? "1px solid #e30613"
-            : "1px solid #ddd"};
-          padding:6px;
-        "
-      >
-        <img
-          src="${escapeHTML(image)}"
-          alt=""
-          style="
-            width:100%;
-            height:100%;
-            object-fit:contain;
-          "
-        >
-      </button>
+      }
+    );
 
-    `).join("");
+  }
 
 
-  $$("[data-product-image]", thumbnails)
-    .forEach(button => {
+  if (manufacturerSelect) {
 
-      button.addEventListener("click", () => {
+    manufacturerSelect.addEventListener(
+      "change",
+      event => {
 
-        mainImage.src =
-          button.dataset.productImage;
+        state.filters.manufacturer =
+          event.target.value;
 
-        $$("[data-product-image]", thumbnails)
-          .forEach(item => {
-            item.style.border =
-              "1px solid #ddd";
-          });
+        renderEquipmentLibrary();
 
-        button.style.border =
-          "1px solid #e30613";
-      });
+      }
+    );
 
-    });
+  }
+
+
+  if (resetButton) {
+
+    resetButton.addEventListener(
+      "click",
+      () => {
+
+        state.filters = {
+          search: "",
+          category: "all",
+          manufacturer: "all"
+        };
+
+
+        if (searchInput) {
+          searchInput.value = "";
+        }
+
+
+        if (categorySelect) {
+          categorySelect.value = "all";
+        }
+
+
+        if (manufacturerSelect) {
+          manufacturerSelect.value = "all";
+        }
+
+
+        renderEquipmentLibrary();
+
+      }
+    );
+
+  }
+
 }
 
 
 /* =========================================================
-   FEATURES
+   POPULATE FILTER OPTIONS
+========================================================= */
+
+function populateFilters() {
+
+  const categorySelect =
+    $("#categoryFilter");
+
+
+  const manufacturerSelect =
+    $("#manufacturerFilter");
+
+
+  const categories =
+    unique(
+      state.products.map(
+        product => product.category
+      )
+    ).sort();
+
+
+  const manufacturers =
+    unique(
+      state.products.map(
+        product => product.manufacturer
+      )
+    ).sort();
+
+
+  if (categorySelect) {
+
+    categorySelect.innerHTML = `
+      <option value="all">
+        All Categories
+      </option>
+
+      ${categories.map(category => `
+        <option value="${escapeHTML(category)}">
+          ${escapeHTML(category)}
+        </option>
+      `).join("")}
+    `;
+
+  }
+
+
+  if (manufacturerSelect) {
+
+    manufacturerSelect.innerHTML = `
+      <option value="all">
+        All Manufacturers
+      </option>
+
+      ${manufacturers.map(manufacturer => `
+        <option value="${escapeHTML(manufacturer)}">
+          ${escapeHTML(manufacturer)}
+        </option>
+      `).join("")}
+    `;
+
+  }
+
+}
+
+
+/* =========================================================
+   HERO SEARCH
+========================================================= */
+
+function initializeHeroSearch() {
+
+  const input =
+    $("#heroSearch") ||
+    $(".hero-search input");
+
+
+  const results =
+    $("#searchResults") ||
+    $(".search-results");
+
+
+  if (!input) return;
+
+
+  input.addEventListener(
+    "input",
+    event => {
+
+      const query =
+        normalize(event.target.value);
+
+
+      if (!query) {
+
+        if (results) {
+          results.style.display = "none";
+        }
+
+        return;
+
+      }
+
+
+      const matches =
+        searchProducts(query)
+          .slice(0, 6);
+
+
+      if (!results) return;
+
+
+      if (!matches.length) {
+
+        results.innerHTML = `
+          <div
+            style="
+              padding:24px;
+              font-size:11px;
+              color:#777;
+            "
+          >
+            No equipment found.
+          </div>
+        `;
+
+        results.style.display = "block";
+
+        return;
+
+      }
+
+
+      results.innerHTML =
+        matches
+          .map(product =>
+            searchResultHTML(product)
+          )
+          .join("");
+
+
+      results.style.display = "block";
+
+
+      bindSearchResults(results);
+
+    }
+  );
+
+
+  input.addEventListener(
+    "keydown",
+    event => {
+
+      if (event.key !== "Enter") {
+        return;
+      }
+
+
+      const query =
+        event.target.value.trim();
+
+
+      if (!query) return;
+
+
+      state.filters.search = query;
+
+      const librarySearch =
+        $("#librarySearch") ||
+        $(".library-search input");
+
+
+      if (librarySearch) {
+        librarySearch.value = query;
+      }
+
+
+      showPage("equipment");
+
+      renderEquipmentLibrary();
+
+
+      if (results) {
+        results.style.display = "none";
+      }
+
+    }
+  );
+
+
+  document.addEventListener(
+    "click",
+    event => {
+
+      if (
+        results &&
+        !event.target.closest(
+          ".hero-search-wrapper"
+        )
+      ) {
+
+        results.style.display = "none";
+
+      }
+
+    }
+  );
+
+}
+
+
+/* =========================================================
+   SEARCH ENGINE
+========================================================= */
+
+function searchProducts(query) {
+
+  const q = normalize(query);
+
+  if (!q) return [];
+
+
+  return state.products.filter(product => {
+
+    const specifications =
+      safeSpecifications(product);
+
+
+    const text = normalize([
+      product.id,
+      product.name,
+      product.model,
+      product.manufacturer,
+      product.category,
+      product.subcategory,
+      product.description,
+      ...Object.keys(specifications),
+      ...Object.values(specifications)
+    ].join(" "));
+
+
+    return text.includes(q);
+
+  });
+
+}
+
+
+/* =========================================================
+   SEARCH RESULT TEMPLATE
+========================================================= */
+
+function searchResultHTML(product) {
+
+  return `
+    <div
+      class="command-result"
+      data-search-product="${escapeHTML(product.id)}"
+    >
+
+      ${
+        product.image
+          ? `
+            <img
+              src="${escapeHTML(product.image)}"
+              alt=""
+              onerror="this.style.display='none'"
+            >
+          `
+          : ""
+      }
+
+      <div>
+
+        <strong>
+          ${escapeHTML(product.name)}
+        </strong>
+
+        <span>
+          ${escapeHTML(product.manufacturer || "")}
+          ·
+          ${escapeHTML(product.model || "")}
+        </span>
+
+      </div>
+
+    </div>
+  `;
+
+}
+
+
+function bindSearchResults(container) {
+
+  $$("[data-search-product]", container)
+    .forEach(item => {
+
+      item.addEventListener(
+        "click",
+        () => {
+
+          openProduct(
+            item.dataset.searchProduct
+          );
+
+        }
+      );
+
+    });
+
+}
+
+
+/* =========================================================
+   QUICK ACCESS
+========================================================= */
+
+function initializeQuickAccess() {
+
+  $$(".hero-quick-search button")
+    .forEach(button => {
+
+      button.addEventListener(
+        "click",
+        () => {
+
+          const category =
+            button.dataset.category ||
+            button.textContent.trim();
+
+
+          state.filters.category =
+            category;
+
+
+          const categorySelect =
+            $("#categoryFilter");
+
+
+          if (categorySelect) {
+
+            const option =
+              [...categorySelect.options]
+                .find(option =>
+                  normalize(option.value) ===
+                  normalize(category)
+                );
+
+
+            if (option) {
+              categorySelect.value =
+                option.value;
+
+              state.filters.category =
+                option.value;
+            }
+
+          }
+
+
+          showPage("equipment");
+
+          renderEquipmentLibrary();
+
+        }
+      );
+
+    });
+
+}
+
+
+/* =========================================================
+   OPEN PRODUCT DETAIL
+========================================================= */
+
+function initializeProductPage() {
+
+  const backButton =
+    $(".product-back") ||
+    $("#productBack");
+
+
+  if (backButton) {
+
+    backButton.addEventListener(
+      "click",
+      closeProduct
+    );
+
+  }
+
+
+  document.addEventListener(
+    "keydown",
+    event => {
+
+      if (
+        event.key === "Escape" &&
+        $(".product-page.open")
+      ) {
+
+        closeProduct();
+
+      }
+
+    }
+  );
+
+}
+
+
+function openProduct(productId) {
+
+  const product =
+    state.products.find(
+      item =>
+        String(item.id) ===
+        String(productId)
+    );
+
+
+  if (!product) {
+
+    showToast(
+      "Product information not found."
+    );
+
+    return;
+
+  }
+
+
+  state.currentProduct = product;
+
+
+  renderProductDetail(product);
+
+
+  const page =
+    $(".product-page") ||
+    $("#productPage");
+
+
+  if (!page) {
+
+    console.warn(
+      "Product page container was not found."
+    );
+
+    return;
+
+  }
+
+
+  page.classList.add("open");
+
+  document.body.classList.add(
+    "no-scroll"
+  );
+
+
+  window.location.hash =
+    `product=${encodeURIComponent(product.id)}`;
+
+}
+
+
+/* =========================================================
+   PRODUCT DETAIL RENDER
+========================================================= */
+
+function renderProductDetail(product) {
+
+  setText(
+    "#productCode",
+    product.id
+  );
+
+  setText(
+    "#productBrand",
+    product.manufacturer || "VEGA"
+  );
+
+  setText(
+    "#productName",
+    product.name
+  );
+
+  setText(
+    "#productModel",
+    product.model || "Project Specific"
+  );
+
+  setText(
+    "#productCategory",
+    product.category || "Fuel Systems"
+  );
+
+  setText(
+    "#productDescription",
+    product.description ||
+      "Technical information available through VEGA Engineering Solutions."
+  );
+
+  setText(
+    "#productPrice",
+    formatPrice(product)
+  );
+
+
+  const image =
+    $("#productImage");
+
+
+  if (image) {
+
+    if (product.image) {
+
+      image.src = product.image;
+
+      image.alt = product.name;
+
+      image.style.display = "block";
+
+    } else {
+
+      image.removeAttribute("src");
+
+      image.style.display = "none";
+
+    }
+
+  }
+
+
+  renderProductSpecifications(product);
+
+  renderProductFeatures(product);
+
+  renderProductDocuments(product);
+
+  initializePrimaryDocumentButton(product);
+
+}
+
+
+/* =========================================================
+   PRODUCT SPECIFICATIONS
+========================================================= */
+
+function renderProductSpecifications(product) {
+
+  const container =
+    $("#productSpecifications") ||
+    $(".product-specifications");
+
+
+  if (!container) return;
+
+
+  const specifications =
+    safeSpecifications(product);
+
+
+  const entries =
+    Object.entries(specifications);
+
+
+  if (!entries.length) {
+
+    container.innerHTML = `
+      <div class="technical-row">
+        <span>Technical Data</span>
+        <strong>
+          Contact VEGA Engineering
+        </strong>
+      </div>
+    `;
+
+    return;
+
+  }
+
+
+  container.innerHTML =
+    entries
+      .map(([label, value]) => `
+        <div class="technical-row">
+
+          <span>
+            ${escapeHTML(label)}
+          </span>
+
+          <strong>
+            ${escapeHTML(value)}
+          </strong>
+
+        </div>
+      `)
+      .join("");
+
+}
+
+
+/* =========================================================
+   PRODUCT FEATURES
 ========================================================= */
 
 function renderProductFeatures(product) {
 
   const container =
-    $("#productFeatures");
+    $("#productFeatures") ||
+    $(".product-features");
 
-  const features =
-    product.features || [];
 
-  if (!features.length) {
+  if (!container) return;
+
+
+  const specifications =
+    Object.entries(
+      safeSpecifications(product)
+    );
+
+
+  if (!specifications.length) {
 
     container.innerHTML = `
       <div class="feature-item">
+
+        <span>01</span>
+
         <strong>
-          Technical information will be added.
+          Project Specific Configuration
         </strong>
+
       </div>
     `;
 
     return;
+
   }
 
-  container.innerHTML =
-    features.map((feature, index) => `
-
-      <div class="feature-item">
-
-        <span>
-          ${String(index + 1).padStart(2, "0")}
-        </span>
-
-        <strong>
-          ${escapeHTML(feature)}
-        </strong>
-
-      </div>
-
-    `).join("");
-}
-
-
-/* =========================================================
-   TECHNICAL DATA
-========================================================= */
-
-function renderTechnicalData(product) {
-
-  const container =
-    $("#technicalTable");
-
-  const specs =
-    product.specifications || {};
-
-  const rows =
-    Object.entries(specs);
-
-  if (!rows.length) {
-
-    container.innerHTML = `
-      <p>
-        Technical specifications
-        have not been added yet.
-      </p>
-    `;
-
-    return;
-  }
 
   container.innerHTML =
-    rows.map(([label, value]) => `
+    specifications
+      .slice(0, 6)
+      .map(([label, value], index) => `
+        <div class="feature-item">
 
-      <div class="technical-row">
+          <span>
+            ${String(index + 1).padStart(2, "0")}
+          </span>
 
-        <span>
-          ${escapeHTML(label)}
-        </span>
+          <strong>
+            ${escapeHTML(label)}
+          </strong>
 
-        <strong>
-          ${escapeHTML(value)}
-        </strong>
+          <small>
+            ${escapeHTML(value)}
+          </small>
 
-      </div>
+        </div>
+      `)
+      .join("");
 
-    `).join("");
 }
 
 
@@ -649,27 +1324,15 @@ function renderTechnicalData(product) {
 function renderProductDocuments(product) {
 
   const container =
-    $("#productDocuments");
+    $("#productDocuments") ||
+    $(".product-documents");
 
-  let documents =
-    product.documents || [];
 
-  if (
-    product.datasheet &&
-    !documents.some(
-      document =>
-        document.url === product.datasheet
-    )
-  ) {
-    documents = [
-      {
-        name: "Technical Datasheet",
-        type: "PDF",
-        url: product.datasheet
-      },
-      ...documents
-    ];
-  }
+  if (!container) return;
+
+
+  const documents =
+    safeDocuments(product);
 
 
   if (!documents.length) {
@@ -678,68 +1341,135 @@ function renderProductDocuments(product) {
       <div class="product-document-row">
 
         <span class="pdf-mark">
-          PDF
+          DOC
         </span>
 
         <strong>
-          No documents uploaded yet
+          No documents currently attached
         </strong>
 
       </div>
     `;
 
     return;
+
   }
 
 
   container.innerHTML =
-    documents.map(document => `
+    documents
+      .map(document => `
+        <div class="product-document-row">
 
-      <div class="product-document-row">
+          <span class="pdf-mark">
+            ${escapeHTML(
+              document.type || "PDF"
+            )}
+          </span>
 
-        <span class="pdf-mark">
-          ${escapeHTML(document.type || "PDF")}
-        </span>
+          <strong>
+            ${escapeHTML(document.name)}
+          </strong>
 
-        <strong>
-          ${escapeHTML(document.name)}
-        </strong>
+          <button
+            type="button"
+            data-document-url="${escapeHTML(document.url || "")}"
+          >
+            OPEN ↗
+          </button>
 
-        ${
-          document.url
-            ? `
-              <button
-                data-document-url="${escapeHTML(document.url)}"
-              >
-                OPEN ↗
-              </button>
-            `
-            : `
-              <button disabled>
-                NOT UPLOADED
-              </button>
-            `
+        </div>
+      `)
+      .join("");
+
+
+  $$(
+    "[data-document-url]",
+    container
+  ).forEach(button => {
+
+    button.addEventListener(
+      "click",
+      () => {
+
+        const url =
+          button.dataset.documentUrl;
+
+
+        if (!url) {
+
+          showToast(
+            "Document is not available."
+          );
+
+          return;
+
         }
 
-      </div>
-
-    `).join("");
-
-
-  $$("[data-document-url]", container)
-    .forEach(button => {
-
-      button.addEventListener("click", () => {
 
         window.open(
-          button.dataset.documentUrl,
+          url,
           "_blank",
           "noopener,noreferrer"
         );
 
-      });
+      }
+    );
 
-    });
+  });
+
+}
+
+
+/* =========================================================
+   PRIMARY DATASHEET BUTTON
+========================================================= */
+
+function initializePrimaryDocumentButton(product) {
+
+  const button =
+    $("#primaryDocumentButton") ||
+    $(".primary-document-button");
+
+
+  if (!button) return;
+
+
+  const documents =
+    safeDocuments(product);
+
+
+  const datasheet =
+    documents.find(document =>
+      normalize(document.name)
+        .includes("datasheet")
+    ) || documents[0];
+
+
+  button.onclick = () => {
+
+    if (
+      !datasheet ||
+      !datasheet.url
+    ) {
+
+      showToast(
+        "Datasheet is not available."
+      );
+
+      return;
+
+    }
+
+
+    window.open(
+      datasheet.url,
+      "_blank",
+      "noopener,noreferrer"
+    );
+
+  };
+
 }
 
 
@@ -749,12 +1479,38 @@ function renderProductDocuments(product) {
 
 function closeProduct() {
 
-  const page = $("#productPage");
+  const page =
+    $(".product-page") ||
+    $("#productPage");
 
-  page.classList.remove("open");
-  page.setAttribute("aria-hidden", "true");
 
-  document.body.classList.remove("no-scroll");
+  if (page) {
+    page.classList.remove("open");
+  }
+
+
+  document.body.classList.remove(
+    "no-scroll"
+  );
+
+
+  state.currentProduct = null;
+
+
+  if (
+    window.location.hash
+      .startsWith("#product=")
+  ) {
+
+    history.replaceState(
+      null,
+      "",
+      window.location.pathname +
+      window.location.search
+    );
+
+  }
+
 }
 
 
@@ -762,28 +1518,53 @@ function closeProduct() {
    PRODUCT TABS
 ========================================================= */
 
-function activateProductTab(name) {
+function initializeProductTabs() {
 
-  $$("[data-product-tab]")
+  $$(".product-tabs button")
     .forEach(button => {
 
-      button.classList.toggle(
-        "active",
-        button.dataset.productTab === name
+      button.addEventListener(
+        "click",
+        () => {
+
+          const target =
+            button.dataset.tab;
+
+
+          $$(".product-tabs button")
+            .forEach(tab =>
+              tab.classList.remove("active")
+            );
+
+
+          button.classList.add("active");
+
+
+          $$(".product-tab-content")
+            .forEach(content =>
+              content.classList.remove("active")
+            );
+
+
+          if (target) {
+
+            const content =
+              document.querySelector(
+                `[data-tab-content="${target}"]`
+              );
+
+
+            if (content) {
+              content.classList.add("active");
+            }
+
+          }
+
+        }
       );
 
     });
 
-
-  $$("[data-product-panel]")
-    .forEach(panel => {
-
-      panel.classList.toggle(
-        "active",
-        panel.dataset.productPanel === name
-      );
-
-    });
 }
 
 
@@ -791,721 +1572,453 @@ function activateProductTab(name) {
    DOCUMENT CENTER
 ========================================================= */
 
-function getDocuments() {
+function renderDocuments() {
 
-  const result = [];
-
-  equipment.forEach(product => {
-
-    const seen = new Set();
-
-    if (product.datasheet) {
-
-      result.push({
-        product,
-        name: "Technical Datasheet",
-        type: "PDF",
-        url: product.datasheet
-      });
-
-      seen.add(product.datasheet);
-    }
+  const container =
+    $("#documentList") ||
+    $(".document-list");
 
 
-    (product.documents || [])
+  if (!container) return;
+
+
+  const documents = [];
+
+
+  state.products.forEach(product => {
+
+    safeDocuments(product)
       .forEach(document => {
 
-        if (
-          document.url &&
-          !seen.has(document.url)
-        ) {
-
-          result.push({
-            product,
-            ...document
-          });
-
-          seen.add(document.url);
-        }
+        documents.push({
+          ...document,
+          productName: product.name,
+          productModel: product.model,
+          manufacturer: product.manufacturer
+        });
 
       });
 
   });
-
-  return result;
-}
-
-
-function renderDocuments(query = "") {
-
-  const container =
-    $("#documentList");
-
-  if (!container) return;
-
-  const search =
-    normalize(query);
-
-  const documents =
-    getDocuments().filter(item => {
-
-      if (!search) return true;
-
-      return normalize(`
-        ${item.product.name}
-        ${item.product.brand}
-        ${item.product.model}
-        ${item.name}
-        ${item.type}
-      `).includes(search);
-
-    });
 
 
   if (!documents.length) {
 
     container.innerHTML = `
-      <div style="
-        text-align:center;
-        padding:100px 20px;
-        color:#888;
-      ">
-        No technical documents found.
-      </div>
-    `;
-
-    return;
-  }
-
-
-  container.innerHTML =
-    documents.map(item => `
-
       <div class="document-row">
 
         <div class="document-type">
-          ${escapeHTML(item.type || "PDF")}
+          DOC
         </div>
 
         <div>
           <h4>
-            ${escapeHTML(item.product.name)}
+            No documents available
           </h4>
 
           <small>
-            ${escapeHTML(item.name)}
+            Upload technical documents to
+            assets/documents
           </small>
         </div>
 
-        <div>
-          ${escapeHTML(item.product.brand)}
-        </div>
-
-        <button
-          class="document-open"
-          data-document-url="${escapeHTML(item.url)}"
-        >
-          OPEN ↗
-        </button>
-
-      </div>
-
-    `).join("");
-
-
-  $$("[data-document-url]", container)
-    .forEach(button => {
-
-      button.addEventListener("click", () => {
-
-        window.open(
-          button.dataset.documentUrl,
-          "_blank",
-          "noopener,noreferrer"
-        );
-
-      });
-
-    });
-}
-
-
-/* =========================================================
-   SEARCH RESULTS
-========================================================= */
-
-function searchEquipment(query, limit = 8) {
-
-  const search =
-    normalize(query);
-
-  if (!search) return [];
-
-  return equipment
-    .filter(product =>
-      productSearchText(product)
-        .includes(search)
-    )
-    .slice(0, limit);
-}
-
-
-function searchResultHTML(product) {
-
-  return `
-    <div
-      class="command-result"
-      data-search-result="${escapeHTML(product.id)}"
-    >
-
-      ${
-        product.image
-          ? `
-            <img
-              src="${escapeHTML(product.image)}"
-              alt=""
-            >
-          `
-          : `
-            <img
-              src="assets/branding/vega-logo.png"
-              alt=""
-              style="opacity:.18;"
-            >
-          `
-      }
-
-      <div>
-
-        <strong>
-          ${escapeHTML(product.name)}
-        </strong>
-
-        <span>
-          ${escapeHTML(product.brand)}
-          ·
-          ${escapeHTML(product.model)}
-        </span>
-
-      </div>
-
-    </div>
-  `;
-}
-
-
-/* =========================================================
-   HERO SEARCH
-========================================================= */
-
-function renderHeroSearch(query) {
-
-  const container =
-    $("#heroSearchResults");
-
-  if (!query.trim()) {
-    container.style.display = "none";
-    container.innerHTML = "";
-    return;
-  }
-
-  const results =
-    searchEquipment(query, 6);
-
-  container.style.display = "block";
-
-  if (!results.length) {
-
-    container.innerHTML = `
-      <div style="
-        padding:25px;
-        color:#777;
-        font-size:12px;
-      ">
-        No equipment found.
       </div>
     `;
 
     return;
+
   }
 
-  container.innerHTML =
-    results.map(searchResultHTML).join("");
 
-  bindSearchResults(container);
+  container.innerHTML =
+    documents
+      .map(document => `
+        <div class="document-row">
+
+          <div class="document-type">
+            ${escapeHTML(
+              document.type || "PDF"
+            )}
+          </div>
+
+          <div>
+
+            <h4>
+              ${escapeHTML(document.name)}
+            </h4>
+
+            <small>
+              ${escapeHTML(document.productName)}
+              ·
+              ${escapeHTML(document.productModel || "")}
+            </small>
+
+          </div>
+
+          <div>
+            <small>
+              ${escapeHTML(
+                document.manufacturer || "VEGA"
+              )}
+            </small>
+          </div>
+
+          <button
+            class="document-open"
+            data-doc-open="${escapeHTML(document.url || "")}"
+          >
+            OPEN ↗
+          </button>
+
+        </div>
+      `)
+      .join("");
+
+
+  $$("[data-doc-open]", container)
+    .forEach(button => {
+
+      button.addEventListener(
+        "click",
+        () => {
+
+          const url =
+            button.dataset.docOpen;
+
+
+          if (!url) {
+
+            showToast(
+              "Document is not available."
+            );
+
+            return;
+
+          }
+
+
+          window.open(
+            url,
+            "_blank",
+            "noopener,noreferrer"
+          );
+
+        }
+      );
+
+    });
+
 }
 
 
 /* =========================================================
-   COMMAND SEARCH
+   HEADER COMMAND SEARCH
 ========================================================= */
+
+function initializeHeaderSearch() {
+
+  const trigger =
+    $(".header-search-button");
+
+
+  const overlay =
+    $(".command-overlay");
+
+
+  const input =
+    $(".command-search input");
+
+
+  const results =
+    $(".command-results");
+
+
+  if (!overlay) return;
+
+
+  if (trigger) {
+
+    trigger.addEventListener(
+      "click",
+      openCommandSearch
+    );
+
+  }
+
+
+  $(".command-search button")
+    ?.addEventListener(
+      "click",
+      closeCommandSearch
+    );
+
+
+  overlay.addEventListener(
+    "click",
+    event => {
+
+      if (event.target === overlay) {
+        closeCommandSearch();
+      }
+
+    }
+  );
+
+
+  if (input) {
+
+    input.addEventListener(
+      "input",
+      () => {
+
+        const query =
+          input.value;
+
+
+        const matches =
+          query.trim()
+            ? searchProducts(query)
+            : state.products.slice(0, 6);
+
+
+        if (!results) return;
+
+
+        results.innerHTML =
+          matches
+            .slice(0, 8)
+            .map(product =>
+              searchResultHTML(product)
+            )
+            .join("");
+
+
+        bindSearchResults(results);
+
+      }
+    );
+
+  }
+
+}
+
 
 function openCommandSearch() {
 
   const overlay =
-    $("#commandOverlay");
+    $(".command-overlay");
+
+
+  if (!overlay) return;
+
 
   overlay.classList.add("open");
 
-  document.body.classList.add("no-scroll");
+
+  const input =
+    $(".command-search input");
+
+
+  const results =
+    $(".command-results");
+
+
+  if (results) {
+
+    results.innerHTML =
+      state.products
+        .slice(0, 6)
+        .map(product =>
+          searchResultHTML(product)
+        )
+        .join("");
+
+
+    bindSearchResults(results);
+
+  }
+
 
   setTimeout(() => {
-    $("#commandSearch").focus();
-  }, 100);
+    input?.focus();
+  }, 50);
+
 }
 
 
 function closeCommandSearch() {
 
-  $("#commandOverlay")
-    .classList.remove("open");
+  $(".command-overlay")
+    ?.classList.remove("open");
 
-  document.body.classList.remove("no-scroll");
-
-  $("#commandSearch").value = "";
-
-  $("#commandResults").innerHTML = "";
-}
-
-
-function renderCommandResults(query) {
-
-  const container =
-    $("#commandResults");
-
-  if (!query.trim()) {
-
-    const initial =
-      equipment.slice(0, 6);
-
-    container.innerHTML =
-      initial.map(searchResultHTML).join("");
-
-    bindSearchResults(container);
-
-    return;
-  }
-
-  const results =
-    searchEquipment(query);
-
-  if (!results.length) {
-
-    container.innerHTML = `
-      <div style="
-        padding:40px 24px;
-        color:#888;
-      ">
-        No matching equipment found.
-      </div>
-    `;
-
-    return;
-  }
-
-  container.innerHTML =
-    results.map(searchResultHTML).join("");
-
-  bindSearchResults(container);
-}
-
-
-function bindSearchResults(parent) {
-
-  $$("[data-search-result]", parent)
-    .forEach(result => {
-
-      result.addEventListener("click", () => {
-
-        const id =
-          result.dataset.searchResult;
-
-        closeCommandSearch();
-
-        $("#heroSearchResults").style.display =
-          "none";
-
-        openProduct(id);
-
-      });
-
-    });
 }
 
 
 /* =========================================================
-   SYSTEM NAVIGATION
+   KEYBOARD SHORTCUTS
 ========================================================= */
 
-function openSystem(system) {
-
-  state.search = "";
-  state.category = "all";
-  state.brand = "all";
-  state.system = system;
-
-  $("#librarySearch").value = "";
-  $("#categoryFilter").value = "all";
-  $("#brandFilter").value = "all";
-  $("#systemFilter").value = system;
-
-  showView("library");
-  renderLibrary();
-}
-
-
-/* =========================================================
-   STATISTICS
-========================================================= */
-
-function updateStatistics() {
-
-  const documents =
-    getDocuments();
-
-  const brands =
-    unique("brand");
-
-  $("#heroEquipmentCount").textContent =
-    String(equipment.length)
-      .padStart(2, "0");
-
-  $("#heroDocumentCount").textContent =
-    String(documents.length)
-      .padStart(2, "0");
-
-  $("#heroBrandCount").textContent =
-    String(brands.length)
-      .padStart(2, "0");
-}
-
-
-/* =========================================================
-   EVENTS
-========================================================= */
-
-function initializeEvents() {
-
-  /* Main navigation */
-
-  $$("[data-nav]").forEach(button => {
-
-    button.addEventListener("click", () => {
-      showView(button.dataset.nav);
-    });
-
-  });
-
-
-  /* Home logo */
-
-  $("#homeButton").addEventListener(
-    "click",
-    () => showView("home")
-  );
-
-
-  /* Data-go navigation */
-
-  $$("[data-go]").forEach(button => {
-
-    button.addEventListener("click", () => {
-      showView(button.dataset.go);
-    });
-
-  });
-
-
-  /* System cards */
-
-  $$("[data-system-search]")
-    .forEach(button => {
-
-      button.addEventListener("click", () => {
-        openSystem(
-          button.dataset.systemSearch
-        );
-      });
-
-    });
-
-
-  /* Hero quick search */
-
-  $$("[data-search]").forEach(button => {
-
-    button.addEventListener("click", () => {
-
-      state.search =
-        button.dataset.search;
-
-      $("#librarySearch").value =
-        state.search;
-
-      showView("library");
-
-      renderLibrary();
-    });
-
-  });
-
-
-  /* Hero search */
-
-  $("#heroSearch").addEventListener(
-    "input",
-    event => {
-      renderHeroSearch(event.target.value);
-    }
-  );
-
-
-  $("#heroSearch").addEventListener(
-    "keydown",
-    event => {
-
-      if (
-        event.key === "Enter" &&
-        event.target.value.trim()
-      ) {
-
-        state.search =
-          event.target.value.trim();
-
-        $("#librarySearch").value =
-          state.search;
-
-        $("#heroSearchResults").style.display =
-          "none";
-
-        showView("library");
-
-        renderLibrary();
-      }
-
-    }
-  );
-
-
-  /* Library search */
-
-  $("#librarySearch").addEventListener(
-    "input",
-    event => {
-
-      state.search =
-        event.target.value;
-
-      renderLibrary();
-    }
-  );
-
-
-  /* Filters */
-
-  $("#categoryFilter").addEventListener(
-    "change",
-    event => {
-
-      state.category =
-        event.target.value;
-
-      renderLibrary();
-    }
-  );
-
-
-  $("#brandFilter").addEventListener(
-    "change",
-    event => {
-
-      state.brand =
-        event.target.value;
-
-      renderLibrary();
-    }
-  );
-
-
-  $("#systemFilter").addEventListener(
-    "change",
-    event => {
-
-      state.system =
-        event.target.value;
-
-      renderLibrary();
-    }
-  );
-
-
-  /* Reset */
-
-  $("#resetFilters").addEventListener(
-    "click",
-    () => {
-
-      state.search = "";
-      state.category = "all";
-      state.brand = "all";
-      state.system = "all";
-
-      $("#librarySearch").value = "";
-      $("#categoryFilter").value = "all";
-      $("#brandFilter").value = "all";
-      $("#systemFilter").value = "all";
-
-      renderLibrary();
-    }
-  );
-
-
-  /* Product back */
-
-  $("#productBack").addEventListener(
-    "click",
-    closeProduct
-  );
-
-
-  /* Product tabs */
-
-  $$("[data-product-tab]")
-    .forEach(button => {
-
-      button.addEventListener("click", () => {
-
-        activateProductTab(
-          button.dataset.productTab
-        );
-
-      });
-
-    });
-
-
-  /* Document search */
-
-  $("#documentSearch").addEventListener(
-    "input",
-    event => {
-      renderDocuments(event.target.value);
-    }
-  );
-
-
-  /* Command search */
-
-  $("#openSearch").addEventListener(
-    "click",
-    () => {
-
-      openCommandSearch();
-
-      renderCommandResults("");
-    }
-  );
-
-
-  $("#closeSearch").addEventListener(
-    "click",
-    closeCommandSearch
-  );
-
-
-  $("#commandSearch").addEventListener(
-    "input",
-    event => {
-      renderCommandResults(
-        event.target.value
-      );
-    }
-  );
-
-
-  $("#commandOverlay").addEventListener(
-    "click",
-    event => {
-
-      if (
-        event.target ===
-        $("#commandOverlay")
-      ) {
-        closeCommandSearch();
-      }
-
-    }
-  );
-
-
-  /* Keyboard shortcuts */
+function initializeKeyboardShortcuts() {
 
   document.addEventListener(
     "keydown",
     event => {
 
-      if (
+      const isSearchShortcut =
         (event.ctrlKey || event.metaKey) &&
-        event.key.toLowerCase() === "k"
-      ) {
+        event.key.toLowerCase() === "k";
+
+
+      if (isSearchShortcut) {
 
         event.preventDefault();
 
         openCommandSearch();
 
-        renderCommandResults("");
       }
 
 
-      if (event.key === "Escape") {
+      if (
+        event.key === "Escape"
+      ) {
 
-        if (
-          $("#commandOverlay")
-            .classList.contains("open")
-        ) {
-
-          closeCommandSearch();
-
-        } else if (
-          $("#productPage")
-            .classList.contains("open")
-        ) {
-
-          closeProduct();
-        }
+        closeCommandSearch();
 
       }
 
     }
   );
+
 }
 
 
 /* =========================================================
-   START
+   HASH ROUTING
 ========================================================= */
 
-function initializeApplication() {
+function handleHashRoute() {
 
-  initializeFilters();
+  const hash =
+    window.location.hash;
 
-  renderFeatured();
 
-  renderLibrary();
+  if (
+    hash.startsWith("#product=")
+  ) {
 
-  renderDocuments();
+    const id =
+      decodeURIComponent(
+        hash.replace("#product=", "")
+      );
 
-  updateStatistics();
 
-  initializeEvents();
+    if (id) {
+      openProduct(id);
+    }
 
-  console.log(
-    `VEGA Fuel Systems Library loaded — ${equipment.length} equipment items`
-  );
+  }
+
 }
 
 
-document.addEventListener(
-  "DOMContentLoaded",
-  initializeApplication
-);
+/* =========================================================
+   PRODUCT COUNT
+========================================================= */
+
+function updateProductCount(
+  count = state.products.length
+) {
+
+  const elements = [
+    $("#productCount"),
+    $("#libraryCount"),
+    $("[data-product-count]")
+  ].filter(Boolean);
+
+
+  elements.forEach(element => {
+    element.textContent = count;
+  });
+
+}
+
+
+/* =========================================================
+   SET TEXT
+========================================================= */
+
+function setText(selector, value) {
+
+  const element =
+    $(selector);
+
+
+  if (element) {
+    element.textContent =
+      value ?? "";
+  }
+
+}
+
+
+/* =========================================================
+   TOAST
+========================================================= */
+
+let toastTimer;
+
+
+function showToast(message) {
+
+  let toast =
+    $(".toast");
+
+
+  if (!toast) {
+
+    toast =
+      document.createElement("div");
+
+    toast.className = "toast";
+
+    document.body.appendChild(toast);
+
+  }
+
+
+  toast.textContent = message;
+
+  toast.classList.add("show");
+
+
+  clearTimeout(toastTimer);
+
+
+  toastTimer =
+    setTimeout(() => {
+
+      toast.classList.remove("show");
+
+    }, 2600);
+
+}
+
+
+/* =========================================================
+   GLOBAL ACCESS
+   Useful for HTML buttons if required
+========================================================= */
+
+window.VegaFuelLibrary = {
+
+  openProduct,
+
+  closeProduct,
+
+  showPage,
+
+  searchProducts,
+
+  renderEquipmentLibrary
+
+};
