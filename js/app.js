@@ -1,52 +1,30 @@
-/* ============================================================
-   VEGA ENGINEERING SOLUTIONS
-   FUEL SYSTEM TECHNICAL LIBRARY
-   Application Engine
-   ============================================================ */
+/* =========================================================
+   VEGA FUEL SYSTEMS
+   APPLICATION ENGINE
+========================================================= */
 
 "use strict";
 
-/* ============================================================
-   01. STATE
-   ============================================================ */
+const equipment = VEGA_EQUIPMENT;
 
 const state = {
   search: "",
   category: "all",
   brand: "all",
   system: "all",
-  favorites: JSON.parse(localStorage.getItem("vega-favorites") || "[]"),
-  selectedProduct: null,
   viewMode: "grid"
 };
 
+const $ = (selector, parent = document) =>
+  parent.querySelector(selector);
 
-/* ============================================================
-   02. HELPERS
-   ============================================================ */
-
-const $ = (selector, parent = document) => parent.querySelector(selector);
 const $$ = (selector, parent = document) =>
-  Array.from(parent.querySelectorAll(selector));
+  [...parent.querySelectorAll(selector)];
 
 
-function safeText(value, fallback = "N/A") {
-  if (value === undefined || value === null || value === "") {
-    return fallback;
-  }
-
-  return String(value);
-}
-
-
-function formatPrice(product) {
-  if (!product.price || Number(product.price) <= 0) {
-    return "Price on Request";
-  }
-
-  return `${Number(product.price).toLocaleString()} ${product.currency || "SAR"}`;
-}
-
+/* =========================================================
+   HELPERS
+========================================================= */
 
 function normalize(value) {
   return String(value || "")
@@ -54,30 +32,42 @@ function normalize(value) {
     .trim();
 }
 
-
-function uniqueValues(key) {
-  return [
-    ...new Set(
-      EQUIPMENT_DATA
-        .map(item => item[key])
-        .filter(Boolean)
-    )
-  ].sort();
+function unique(key) {
+  return [...new Set(
+    equipment
+      .map(item => item[key])
+      .filter(Boolean)
+  )].sort();
 }
 
-
-function isFavorite(id) {
-  return state.favorites.includes(id);
+function productSearchText(product) {
+  return normalize([
+    product.id,
+    product.name,
+    product.brand,
+    product.model,
+    product.category,
+    product.system,
+    product.description,
+    product.origin,
+    ...(product.features || []),
+    ...Object.entries(product.specifications || {})
+      .flat()
+  ].join(" "));
 }
 
-
-function saveFavorites() {
-  localStorage.setItem(
-    "vega-favorites",
-    JSON.stringify(state.favorites)
-  );
+function getProduct(id) {
+  return equipment.find(item => item.id === id);
 }
 
+function escapeHTML(value) {
+  return String(value || "")
+    .replaceAll("&", "&amp;")
+    .replaceAll("<", "&lt;")
+    .replaceAll(">", "&gt;")
+    .replaceAll('"', "&quot;")
+    .replaceAll("'", "&#039;");
+}
 
 function showToast(message) {
   const toast = $("#toast");
@@ -85,206 +75,135 @@ function showToast(message) {
   if (!toast) return;
 
   toast.textContent = message;
-  toast.classList.add("active");
+  toast.classList.add("show");
 
   clearTimeout(showToast.timer);
 
   showToast.timer = setTimeout(() => {
-    toast.classList.remove("active");
+    toast.classList.remove("show");
   }, 2200);
 }
 
 
-/* ============================================================
-   03. PRODUCT SEARCH INDEX
-   ============================================================ */
+/* =========================================================
+   NAVIGATION
+========================================================= */
 
-function searchableText(product) {
+function showView(name) {
 
-  const specs = product.specifications
-    ? Object.entries(product.specifications)
-        .map(([key, value]) => `${key} ${value}`)
-        .join(" ")
-    : "";
-
-  const features = (product.features || []).join(" ");
-  const tags = (product.tags || []).join(" ");
-
-  return normalize(`
-    ${product.id}
-    ${product.name}
-    ${product.shortName}
-    ${product.brand}
-    ${product.model}
-    ${product.category}
-    ${product.system}
-    ${product.description}
-    ${product.origin}
-    ${specs}
-    ${features}
-    ${tags}
-  `);
-}
-
-
-/* ============================================================
-   04. FILTERING
-   ============================================================ */
-
-function getFilteredProducts() {
-
-  const query = normalize(state.search);
-
-  return EQUIPMENT_DATA.filter(product => {
-
-    const matchesSearch =
-      !query ||
-      searchableText(product).includes(query);
-
-    const matchesCategory =
-      state.category === "all" ||
-      product.category === state.category;
-
-    const matchesBrand =
-      state.brand === "all" ||
-      product.brand === state.brand;
-
-    const matchesSystem =
-      state.system === "all" ||
-      product.system === state.system;
-
-    return (
-      matchesSearch &&
-      matchesCategory &&
-      matchesBrand &&
-      matchesSystem
+  $$(".page-view").forEach(view => {
+    view.classList.toggle(
+      "active",
+      view.dataset.view === name
     );
+  });
 
+  $$(".nav-link").forEach(button => {
+    button.classList.toggle(
+      "active",
+      button.dataset.nav === name
+    );
+  });
+
+  window.scrollTo({
+    top: 0,
+    behavior: "smooth"
   });
 }
 
 
-/* ============================================================
-   05. PRODUCT IMAGE
-   ============================================================ */
+/* =========================================================
+   PRODUCT PLACEHOLDER
+========================================================= */
 
-function productImageHTML(product) {
+function productVisual(product) {
 
   if (product.image) {
     return `
       <img
-        src="${product.image}"
-        alt="${product.name}"
+        src="${escapeHTML(product.image)}"
+        alt="${escapeHTML(product.name)}"
         loading="lazy"
-        onerror="this.style.display='none';
-        this.nextElementSibling.style.display='flex';"
       >
-
-      <div
-        class="card-image-placeholder"
-        style="display:none"
-      >
-        <span>VEGA</span>
-        <strong>FUEL SYSTEM</strong>
-      </div>
     `;
   }
 
   return `
-    <div class="card-image-placeholder">
-      <span>VEGA</span>
-      <strong>FUEL SYSTEM</strong>
+    <div style="
+      width:100%;
+      height:100%;
+      display:flex;
+      flex-direction:column;
+      align-items:center;
+      justify-content:center;
+      gap:15px;
+      color:#a2a4a7;
+    ">
+      <img
+        src="assets/branding/vega-logo.png"
+        alt=""
+        style="
+          width:105px;
+          height:auto;
+          opacity:.13;
+        "
+      >
+
+      <span style="
+        font-size:8px;
+        letter-spacing:2px;
+      ">
+        PRODUCT IMAGE
+      </span>
     </div>
   `;
 }
 
 
-/* ============================================================
-   06. EQUIPMENT CARD
-   ============================================================ */
+/* =========================================================
+   PRODUCT CARD
+========================================================= */
 
-function createEquipmentCard(product) {
-
-  const favorite = isFavorite(product.id);
+function productCard(product) {
 
   return `
     <article
-      class="equipment-card"
-      data-product="${product.id}"
+      class="product-card"
+      data-product-id="${escapeHTML(product.id)}"
       tabindex="0"
-      role="button"
-      aria-label="Open ${product.name}"
     >
 
-      <div class="equipment-image">
+      <div class="product-card-image">
 
-        <span class="equipment-category">
-          ${safeText(product.category)}
+        <span class="product-card-index">
+          ${escapeHTML(product.id)}
         </span>
 
-        <button
-          class="favorite-card ${favorite ? "active" : ""}"
-          data-favorite="${product.id}"
-          aria-label="Add to favorites"
-          title="Favorite"
-        >
-          ${favorite ? "♥" : "♡"}
-        </button>
-
-        ${productImageHTML(product)}
+        ${productVisual(product)}
 
       </div>
 
+      <div class="product-card-body">
 
-      <div class="equipment-body">
-
-        <div class="equipment-brand">
-          ${safeText(product.brand)}
-        </div>
+        <span class="product-card-brand">
+          ${escapeHTML(product.brand)}
+        </span>
 
         <h3>
-          ${safeText(product.name)}
+          ${escapeHTML(product.name)}
         </h3>
 
-        <p class="equipment-subtitle">
-          ${safeText(product.description)}
-        </p>
-
-
-        <div class="equipment-meta">
-
-          <div>
-            <span>MODEL</span>
-            <strong>
-              ${safeText(product.model)}
-            </strong>
-          </div>
-
-          <div>
-            <span>ORIGIN</span>
-            <strong>
-              ${safeText(product.origin)}
-            </strong>
-          </div>
-
+        <div class="product-card-model">
+          ${escapeHTML(product.model)}
         </div>
 
+        <div class="product-card-footer">
 
-        <div class="equipment-footer">
+          <strong>
+            ${escapeHTML(product.category)}
+          </strong>
 
-          <div class="equipment-price">
-            <small>PRICE</small>
-            <strong>
-              ${formatPrice(product)}
-            </strong>
-          </div>
-
-          <button
-            class="open-equipment"
-            data-open-product="${product.id}"
-          >
-            VIEW DETAILS →
-          </button>
+          <span>↗</span>
 
         </div>
 
@@ -295,75 +214,38 @@ function createEquipmentCard(product) {
 }
 
 
-/* ============================================================
-   07. RENDER EQUIPMENT
-   ============================================================ */
+/* =========================================================
+   FEATURED EQUIPMENT
+========================================================= */
 
-function renderEquipment() {
+function renderFeatured() {
 
-  const grid = $("#equipmentGrid");
-
-  if (!grid) return;
-
-  const products = getFilteredProducts();
-
-  grid.innerHTML = products
-    .map(createEquipmentCard)
-    .join("");
-
-  const count = $("#resultCount");
-
-  if (count) {
-    count.textContent = products.length;
-  }
-
-  const empty = $("#emptyState");
-
-  if (empty) {
-    empty.classList.toggle(
-      "active",
-      products.length === 0
-    );
-  }
-
-  grid.style.display =
-    products.length === 0
-      ? "none"
-      : "grid";
-
-  bindProductCards();
-}
-
-
-/* ============================================================
-   08. HOME PRODUCT PREVIEW
-   ============================================================ */
-
-function renderHomePreview() {
-
-  const container = $("#homeEquipmentPreview");
+  const container = $("#featuredProducts");
 
   if (!container) return;
 
-  const products = EQUIPMENT_DATA.slice(0, 4);
+  let products =
+    equipment.filter(item => item.featured);
 
-  container.innerHTML = products
-    .map(createEquipmentCard)
-    .join("");
+  if (!products.length) {
+    products = equipment.slice(0, 4);
+  }
 
-  bindProductCards();
+  container.innerHTML =
+    products
+      .slice(0, 4)
+      .map(productCard)
+      .join("");
+
+  bindProductCards(container);
 }
 
 
-/* ============================================================
-   09. FILTER OPTIONS
-   ============================================================ */
+/* =========================================================
+   FILTERS
+========================================================= */
 
-function fillSelect(
-  selector,
-  values,
-  defaultLabel
-) {
+function fillSelect(selector, values, label) {
 
   const select = $(selector);
 
@@ -371,889 +253,439 @@ function fillSelect(
 
   select.innerHTML = `
     <option value="all">
-      ${defaultLabel}
+      ${label}
     </option>
 
     ${values.map(value => `
-      <option value="${value}">
-        ${value}
+      <option value="${escapeHTML(value)}">
+        ${escapeHTML(value)}
       </option>
     `).join("")}
   `;
 }
 
-
 function initializeFilters() {
 
   fillSelect(
     "#categoryFilter",
-    uniqueValues("category"),
+    unique("category"),
     "All Categories"
   );
 
   fillSelect(
     "#brandFilter",
-    uniqueValues("brand"),
-    "All Brands"
+    unique("brand"),
+    "All Manufacturers"
   );
 
   fillSelect(
     "#systemFilter",
-    uniqueValues("system"),
+    unique("system"),
     "All Systems"
   );
 }
 
 
-/* ============================================================
-   10. GLOBAL SEARCH
-   ============================================================ */
+/* =========================================================
+   EQUIPMENT FILTERING
+========================================================= */
 
-function renderGlobalSearchResults(query) {
+function filteredEquipment() {
 
-  const container = $("#globalSearchResults");
+  const query = normalize(state.search);
+
+  return equipment.filter(product => {
+
+    const searchMatch =
+      !query ||
+      productSearchText(product).includes(query);
+
+    const categoryMatch =
+      state.category === "all" ||
+      product.category === state.category;
+
+    const brandMatch =
+      state.brand === "all" ||
+      product.brand === state.brand;
+
+    const systemMatch =
+      state.system === "all" ||
+      product.system === state.system;
+
+    return (
+      searchMatch &&
+      categoryMatch &&
+      brandMatch &&
+      systemMatch
+    );
+  });
+}
+
+
+/* =========================================================
+   EQUIPMENT LIBRARY
+========================================================= */
+
+function renderLibrary() {
+
+  const container = $("#equipmentGrid");
 
   if (!container) return;
 
-  const cleanQuery = normalize(query);
+  const products = filteredEquipment();
 
-  if (!cleanQuery) {
+  $("#resultCount").textContent =
+    products.length;
+
+  const empty = $("#emptyState");
+
+  if (!products.length) {
+
     container.innerHTML = "";
-    container.classList.remove("active");
-    return;
-  }
-
-  const results = EQUIPMENT_DATA
-    .filter(product =>
-      searchableText(product).includes(cleanQuery)
-    )
-    .slice(0, 6);
-
-  if (!results.length) {
-
-    container.innerHTML = `
-      <div
-        style="
-          padding:22px;
-          text-align:center;
-          color:#999;
-          font-size:10px;
-        "
-      >
-        No equipment found
-      </div>
-    `;
-
-    container.classList.add("active");
+    empty.style.display = "block";
 
     return;
   }
 
-  container.innerHTML = results.map(product => `
+  empty.style.display = "none";
 
-    <button
-      class="search-result-item"
-      data-search-product="${product.id}"
-    >
+  container.innerHTML =
+    products.map(productCard).join("");
 
-      <div class="search-result-image">
-        ${
-          product.image
-            ? `<img src="${product.image}" alt="${product.name}">`
-            : `<span style="font-size:8px;font-weight:800;color:#ed1c24;">VEGA</span>`
+  bindProductCards(container);
+}
+
+
+/* =========================================================
+   PRODUCT CARD EVENTS
+========================================================= */
+
+function bindProductCards(parent = document) {
+
+  $$("[data-product-id]", parent)
+    .forEach(card => {
+
+      card.addEventListener("click", () => {
+        openProduct(card.dataset.productId);
+      });
+
+      card.addEventListener("keydown", event => {
+
+        if (
+          event.key === "Enter" ||
+          event.key === " "
+        ) {
+          event.preventDefault();
+          openProduct(card.dataset.productId);
         }
-      </div>
-
-
-      <div class="search-result-info">
-
-        <strong>
-          ${product.name}
-        </strong>
-
-        <span>
-          ${product.brand}
-          •
-          ${product.model}
-          •
-          ${product.category}
-        </span>
-
-      </div>
-
-      <div class="search-result-arrow">
-        →
-      </div>
-
-    </button>
-
-  `).join("");
-
-  container.classList.add("active");
-
-
-  $$("[data-search-product]", container)
-    .forEach(button => {
-
-      button.addEventListener("click", () => {
-
-        const product = EQUIPMENT_DATA.find(
-          item =>
-            item.id === button.dataset.searchProduct
-        );
-
-        if (product) {
-          openProduct(product);
-        }
-
-        container.classList.remove("active");
 
       });
 
     });
-
 }
 
 
-/* ============================================================
-   11. OPEN PRODUCT
-   ============================================================ */
+/* =========================================================
+   OPEN PRODUCT
+========================================================= */
 
-function openProduct(product) {
+function openProduct(id) {
 
-  state.selectedProduct = product;
+  const product = getProduct(id);
 
-  const overlay = $("#productOverlay");
+  if (!product) return;
 
-  if (!overlay) return;
+  $("#productCode").textContent =
+    product.id;
 
+  $("#productCategory").textContent =
+    product.category;
 
-  /* Basic Information */
+  $("#productBrand").textContent =
+    product.brand;
 
-  setText("#productCategory", product.category);
-  setText("#productBrand", product.brand);
-  setText("#productName", product.name);
-  setText("#productTitle", product.description);
+  $("#productName").textContent =
+    product.name;
 
-  setText("#productPrice", formatPrice(product));
-  setText("#productModel", product.model);
-  setText("#productOrigin", product.origin);
-  setText("#productSystem", product.system);
+  $("#productDescription").textContent =
+    product.description || "";
 
-  setText(
-    "#productAvailability",
-    product.status || "Available"
-  );
+  $("#productModel").textContent =
+    product.model || "—";
 
+  $("#productOrigin").textContent =
+    product.origin || "—";
 
-  /* Main Image */
+  $("#productSystem").textContent =
+    product.system || "—";
 
-  renderProductGallery(product);
-
-
-  /* Description */
-
-  const description = $("#productDescription");
-
-  if (description) {
-    description.textContent =
-      product.description || "No description available.";
-  }
+  $("#productPrice").textContent =
+    product.price || "Price on Request";
 
 
-  /* Features */
-
-  const featureList = $("#productFeatures");
-
-  if (featureList) {
-
-    featureList.innerHTML =
-      (product.features || [])
-        .map(feature => `
-          <div class="feature-item">
-            ${feature}
-          </div>
-        `)
-        .join("");
-
-  }
-
-
-  /* Technical Data */
-
+  renderProductImages(product);
+  renderProductFeatures(product);
   renderTechnicalData(product);
-
-
-  /* Documents */
-
   renderProductDocuments(product);
 
 
-  /* Product Images */
+  const datasheetButton =
+    $("#productDatasheet");
 
-  renderProductImages(product);
+  datasheetButton.onclick = () => {
 
-
-  /* Favorite */
-
-  const favoriteButton = $("#favoriteProduct");
-
-  if (favoriteButton) {
-
-    favoriteButton.classList.toggle(
-      "active",
-      isFavorite(product.id)
-    );
-
-    favoriteButton.textContent =
-      isFavorite(product.id)
-        ? "♥"
-        : "♡";
-
-  }
-
-
-  /* Datasheet */
-
-  const datasheetButton = $("#productDatasheet");
-
-  if (datasheetButton) {
-
-    datasheetButton.onclick = () => {
-
-      if (!product.datasheet) {
-
-        showToast(
-          "Datasheet has not been uploaded yet."
-        );
-
-        return;
-      }
-
-      window.open(
-        product.datasheet,
-        "_blank",
-        "noopener,noreferrer"
+    if (!product.datasheet) {
+      showToast(
+        "Datasheet has not been uploaded yet."
       );
+      return;
+    }
 
-    };
+    window.open(
+      product.datasheet,
+      "_blank",
+      "noopener,noreferrer"
+    );
+  };
 
-  }
 
+  const page = $("#productPage");
 
-  overlay.classList.add("active");
+  page.classList.add("open");
+  page.setAttribute("aria-hidden", "false");
 
-  document.body.style.overflow = "hidden";
+  document.body.classList.add("no-scroll");
 
   activateProductTab("overview");
 
+  page.scrollTop = 0;
 }
 
 
-/* ============================================================
-   12. SET TEXT SAFELY
-   ============================================================ */
+/* =========================================================
+   PRODUCT IMAGES
+========================================================= */
 
-function setText(selector, value) {
+function renderProductImages(product) {
 
-  const element = $(selector);
+  const mainImage =
+    $("#productMainImage");
 
-  if (element) {
-    element.textContent = safeText(value);
-  }
+  const placeholder =
+    $("#productImagePlaceholder");
 
-}
+  const thumbnails =
+    $("#productThumbnails");
 
-
-/* ============================================================
-   13. PRODUCT GALLERY
-   ============================================================ */
-
-function getProductImages(product) {
-
-  const images = [];
-
-  if (product.image) {
-    images.push(product.image);
-  }
-
-  if (Array.isArray(product.images)) {
-
-    product.images.forEach(image => {
-
-      if (
-        image &&
-        !images.includes(image)
-      ) {
-        images.push(image);
-      }
-
-    });
-
-  }
-
-  return images;
-}
-
-
-function renderProductGallery(product) {
-
-  const stageImage = $("#productMainImage");
-  const placeholder = $("#productImagePlaceholder");
-  const thumbnails = $("#productThumbnails");
-
-  const images = getProductImages(product);
-
-  if (!stageImage || !placeholder) return;
+  const images = [
+    product.image,
+    ...(product.images || [])
+  ].filter(Boolean);
 
 
   if (!images.length) {
 
-    stageImage.style.display = "none";
-    placeholder.style.display = "flex";
-
-    if (thumbnails) {
-      thumbnails.innerHTML = "";
-    }
+    mainImage.style.display = "none";
+    placeholder.style.display = "grid";
+    thumbnails.innerHTML = "";
 
     return;
   }
 
 
+  mainImage.style.display = "block";
   placeholder.style.display = "none";
 
-  stageImage.src = images[0];
-  stageImage.alt = product.name;
-  stageImage.style.display = "block";
+  mainImage.src = images[0];
+  mainImage.alt = product.name;
 
 
-  if (thumbnails) {
-
-    thumbnails.innerHTML =
-      images.map((image, index) => `
-
-        <button
-          class="product-thumbnail ${index === 0 ? "active" : ""}"
-          data-image="${image}"
-        >
-          <img
-            src="${image}"
-            alt="${product.name}"
-          >
-        </button>
-
-      `).join("");
-
-
-    $$(".product-thumbnail", thumbnails)
-      .forEach(button => {
-
-        button.addEventListener("click", () => {
-
-          stageImage.src =
-            button.dataset.image;
-
-          $$(".product-thumbnail", thumbnails)
-            .forEach(item =>
-              item.classList.remove("active")
-            );
-
-          button.classList.add("active");
-
-        });
-
-      });
-
-  }
-
-}
-
-
-/* ============================================================
-   14. TECHNICAL DATA
-   ============================================================ */
-
-function renderTechnicalData(product) {
-
-  const container = $("#technicalTable");
-
-  if (!container) return;
-
-  const specs = product.specifications || {};
-
-  container.innerHTML =
-    Object.entries(specs)
-      .map(([key, value]) => `
-
-        <div class="technical-row">
-
-          <span>
-            ${key}
-          </span>
-
-          <strong>
-            ${safeText(value)}
-          </strong>
-
-        </div>
-
-      `)
-      .join("");
-
-}
-
-
-/* ============================================================
-   15. PRODUCT DOCUMENTS
-   ============================================================ */
-
-function renderProductDocuments(product) {
-
-  const container = $("#productDocuments");
-
-  if (!container) return;
-
-  if (!product.datasheet) {
-
-    container.innerHTML = `
-
-      <div class="product-document">
-
-        <div class="product-document-icon">
-          PDF
-        </div>
-
-        <div>
-          <strong>
-            Product Datasheet
-          </strong>
-
-          <span>
-            Datasheet not uploaded yet
-          </span>
-        </div>
-
-        <button disabled>
-          NOT AVAILABLE
-        </button>
-
-      </div>
-
-    `;
-
-    return;
-  }
-
-
-  container.innerHTML = `
-
-    <div class="product-document">
-
-      <div class="product-document-icon">
-        PDF
-      </div>
-
-      <div>
-        <strong>
-          ${product.name} — Technical Datasheet
-        </strong>
-
-        <span>
-          Manufacturer technical document
-        </span>
-      </div>
+  thumbnails.innerHTML =
+    images.map((image, index) => `
 
       <button
-        data-document="${product.datasheet}"
+        class="product-thumb"
+        data-product-image="${escapeHTML(image)}"
+        style="
+          width:76px;
+          height:76px;
+          background:white;
+          border:${index === 0
+            ? "1px solid #e30613"
+            : "1px solid #ddd"};
+          padding:6px;
+        "
       >
-        OPEN PDF
+        <img
+          src="${escapeHTML(image)}"
+          alt=""
+          style="
+            width:100%;
+            height:100%;
+            object-fit:contain;
+          "
+        >
       </button>
 
-    </div>
-
-  `;
+    `).join("");
 
 
-  $$("[data-document]", container)
+  $$("[data-product-image]", thumbnails)
     .forEach(button => {
 
       button.addEventListener("click", () => {
 
-        window.open(
-          button.dataset.document,
-          "_blank",
-          "noopener,noreferrer"
-        );
+        mainImage.src =
+          button.dataset.productImage;
 
+        $$("[data-product-image]", thumbnails)
+          .forEach(item => {
+            item.style.border =
+              "1px solid #ddd";
+          });
+
+        button.style.border =
+          "1px solid #e30613";
       });
 
     });
-
 }
 
 
-/* ============================================================
-   16. PRODUCT IMAGES TAB
-   ============================================================ */
+/* =========================================================
+   FEATURES
+========================================================= */
 
-function renderProductImages(product) {
+function renderProductFeatures(product) {
 
-  const container = $("#productImageGrid");
+  const container =
+    $("#productFeatures");
 
-  if (!container) return;
+  const features =
+    product.features || [];
 
-  const images = getProductImages(product);
-
-  if (!images.length) {
+  if (!features.length) {
 
     container.innerHTML = `
-
-      <div
-        style="
-          grid-column:1/-1;
-          padding:60px;
-          text-align:center;
-          color:#999;
-          font-size:10px;
-        "
-      >
-        Product images have not been uploaded yet.
+      <div class="feature-item">
+        <strong>
+          Technical information will be added.
+        </strong>
       </div>
-
     `;
 
     return;
   }
 
-
   container.innerHTML =
-    images.map(image => `
+    features.map((feature, index) => `
 
-      <div class="product-image-grid-item">
+      <div class="feature-item">
 
-        <img
-          src="${image}"
-          alt="${product.name}"
-        >
+        <span>
+          ${String(index + 1).padStart(2, "0")}
+        </span>
+
+        <strong>
+          ${escapeHTML(feature)}
+        </strong>
 
       </div>
 
     `).join("");
-
 }
 
 
-/* ============================================================
-   17. CLOSE PRODUCT
-   ============================================================ */
+/* =========================================================
+   TECHNICAL DATA
+========================================================= */
 
-function closeProduct() {
+function renderTechnicalData(product) {
 
-  const overlay = $("#productOverlay");
+  const container =
+    $("#technicalTable");
 
-  if (!overlay) return;
+  const specs =
+    product.specifications || {};
 
-  overlay.classList.remove("active");
+  const rows =
+    Object.entries(specs);
 
-  document.body.style.overflow = "";
+  if (!rows.length) {
 
-  state.selectedProduct = null;
+    container.innerHTML = `
+      <p>
+        Technical specifications
+        have not been added yet.
+      </p>
+    `;
 
-}
-
-
-/* ============================================================
-   18. FAVORITES
-   ============================================================ */
-
-function toggleFavorite(id) {
-
-  if (isFavorite(id)) {
-
-    state.favorites =
-      state.favorites.filter(
-        favoriteId => favoriteId !== id
-      );
-
-    showToast("Removed from favorites");
-
-  } else {
-
-    state.favorites.push(id);
-
-    showToast("Added to favorites");
-
+    return;
   }
 
-  saveFavorites();
+  container.innerHTML =
+    rows.map(([label, value]) => `
 
-  updateFavoriteCount();
+      <div class="technical-row">
 
-  renderEquipment();
+        <span>
+          ${escapeHTML(label)}
+        </span>
 
-  renderHomePreview();
+        <strong>
+          ${escapeHTML(value)}
+        </strong>
 
+      </div>
+
+    `).join("");
+}
+
+
+/* =========================================================
+   PRODUCT DOCUMENTS
+========================================================= */
+
+function renderProductDocuments(product) {
+
+  const container =
+    $("#productDocuments");
+
+  let documents =
+    product.documents || [];
 
   if (
-    state.selectedProduct &&
-    state.selectedProduct.id === id
+    product.datasheet &&
+    !documents.some(
+      document =>
+        document.url === product.datasheet
+    )
   ) {
-
-    const button = $("#favoriteProduct");
-
-    if (button) {
-
-      button.classList.toggle(
-        "active",
-        isFavorite(id)
-      );
-
-      button.textContent =
-        isFavorite(id)
-          ? "♥"
-          : "♡";
-
-    }
-
+    documents = [
+      {
+        name: "Technical Datasheet",
+        type: "PDF",
+        url: product.datasheet
+      },
+      ...documents
+    ];
   }
-
-}
-
-
-function updateFavoriteCount() {
-
-  const counter = $("#favoriteCount");
-
-  if (counter) {
-    counter.textContent =
-      state.favorites.length;
-  }
-
-}
-
-
-/* ============================================================
-   19. BIND PRODUCT CARDS
-   ============================================================ */
-
-function bindProductCards() {
-
-  $$("[data-product]").forEach(card => {
-
-    card.addEventListener("click", event => {
-
-      if (
-        event.target.closest("[data-favorite]") ||
-        event.target.closest("[data-open-product]")
-      ) {
-        return;
-      }
-
-      const product = EQUIPMENT_DATA.find(
-        item =>
-          item.id === card.dataset.product
-      );
-
-      if (product) {
-        openProduct(product);
-      }
-
-    });
-
-
-    card.addEventListener("keydown", event => {
-
-      if (
-        event.key === "Enter" ||
-        event.key === " "
-      ) {
-
-        event.preventDefault();
-
-        const product = EQUIPMENT_DATA.find(
-          item =>
-            item.id === card.dataset.product
-        );
-
-        if (product) {
-          openProduct(product);
-        }
-
-      }
-
-    });
-
-  });
-
-
-  $$("[data-open-product]").forEach(button => {
-
-    button.addEventListener("click", event => {
-
-      event.stopPropagation();
-
-      const product = EQUIPMENT_DATA.find(
-        item =>
-          item.id === button.dataset.openProduct
-      );
-
-      if (product) {
-        openProduct(product);
-      }
-
-    });
-
-  });
-
-
-  $$("[data-favorite]").forEach(button => {
-
-    button.addEventListener("click", event => {
-
-      event.stopPropagation();
-
-      toggleFavorite(
-        button.dataset.favorite
-      );
-
-    });
-
-  });
-
-}
-
-
-/* ============================================================
-   20. VIEWS / NAVIGATION
-   ============================================================ */
-
-function showView(viewName) {
-
-  $$(".view").forEach(view => {
-    view.classList.remove("active");
-  });
-
-  const target =
-    $(`[data-view="${viewName}"]`);
-
-  if (target) {
-    target.classList.add("active");
-  }
-
-
-  $$("[data-nav]").forEach(button => {
-
-    button.classList.toggle(
-      "active",
-      button.dataset.nav === viewName
-    );
-
-  });
-
-
-  const pageName = $("#currentPage");
-
-  if (pageName) {
-
-    const names = {
-      home: "Fuel System Hub",
-      library: "Equipment Library",
-      documents: "Document Center"
-    };
-
-    pageName.textContent =
-      names[viewName] || "Fuel System Hub";
-
-  }
-
-
-  window.scrollTo({
-    top: 0,
-    behavior: "smooth"
-  });
-
-
-  const sidebar = $("#sidebar");
-
-  if (sidebar) {
-    sidebar.classList.remove("mobile-open");
-  }
-
-}
-
-
-/* ============================================================
-   21. PRODUCT TABS
-   ============================================================ */
-
-function activateProductTab(tabName) {
-
-  $$(".product-tab")
-    .forEach(tab => {
-
-      tab.classList.toggle(
-        "active",
-        tab.dataset.tab === tabName
-      );
-
-    });
-
-
-  $$(".product-tab-panel")
-    .forEach(panel => {
-
-      panel.classList.toggle(
-        "active",
-        panel.dataset.panel === tabName
-      );
-
-    });
-
-}
-
-
-/* ============================================================
-   22. DOCUMENT CENTER
-   ============================================================ */
-
-function renderDocumentCenter(
-  query = ""
-) {
-
-  const container = $("#documentList");
-
-  if (!container) return;
-
-  const search = normalize(query);
-
-  const documents =
-    EQUIPMENT_DATA
-      .filter(product => product.datasheet)
-      .filter(product => {
-
-        if (!search) return true;
-
-        return searchableText(product)
-          .includes(search);
-
-      });
 
 
   if (!documents.length) {
 
     container.innerHTML = `
+      <div class="product-document-row">
 
-      <div
-        style="
-          padding:60px;
-          text-align:center;
-          color:#999;
-          font-size:10px;
-        "
-      >
-        No documents found.
+        <span class="pdf-mark">
+          PDF
+        </span>
+
+        <strong>
+          No documents uploaded yet
+        </strong>
+
       </div>
-
     `;
 
     return;
@@ -1261,53 +693,46 @@ function renderDocumentCenter(
 
 
   container.innerHTML =
-    documents.map(product => `
+    documents.map(document => `
 
-      <div class="document-row">
+      <div class="product-document-row">
 
-        <div class="document-type">
-          PDF
-        </div>
-
-        <div class="document-name">
-
-          <strong>
-            ${product.name}
-          </strong>
-
-          <span>
-            Technical Datasheet
-          </span>
-
-        </div>
-
-        <span>
-          ${product.brand}
+        <span class="pdf-mark">
+          ${escapeHTML(document.type || "PDF")}
         </span>
 
-        <span>
-          ${product.category}
-        </span>
+        <strong>
+          ${escapeHTML(document.name)}
+        </strong>
 
-        <button
-          class="document-open"
-          data-document="${product.datasheet}"
-        >
-          OPEN
-        </button>
+        ${
+          document.url
+            ? `
+              <button
+                data-document-url="${escapeHTML(document.url)}"
+              >
+                OPEN ↗
+              </button>
+            `
+            : `
+              <button disabled>
+                NOT UPLOADED
+              </button>
+            `
+        }
 
       </div>
 
     `).join("");
 
 
-  $$("[data-document]", container)
+  $$("[data-document-url]", container)
     .forEach(button => {
 
       button.addEventListener("click", () => {
 
         window.open(
-          button.dataset.document,
+          button.dataset.documentUrl,
           "_blank",
           "noopener,noreferrer"
         );
@@ -1315,636 +740,770 @@ function renderDocumentCenter(
       });
 
     });
-
 }
 
 
-/* ============================================================
-   23. DATABASE STATISTICS
-   ============================================================ */
+/* =========================================================
+   CLOSE PRODUCT
+========================================================= */
+
+function closeProduct() {
+
+  const page = $("#productPage");
+
+  page.classList.remove("open");
+  page.setAttribute("aria-hidden", "true");
+
+  document.body.classList.remove("no-scroll");
+}
+
+
+/* =========================================================
+   PRODUCT TABS
+========================================================= */
+
+function activateProductTab(name) {
+
+  $$("[data-product-tab]")
+    .forEach(button => {
+
+      button.classList.toggle(
+        "active",
+        button.dataset.productTab === name
+      );
+
+    });
+
+
+  $$("[data-product-panel]")
+    .forEach(panel => {
+
+      panel.classList.toggle(
+        "active",
+        panel.dataset.productPanel === name
+      );
+
+    });
+}
+
+
+/* =========================================================
+   DOCUMENT CENTER
+========================================================= */
+
+function getDocuments() {
+
+  const result = [];
+
+  equipment.forEach(product => {
+
+    const seen = new Set();
+
+    if (product.datasheet) {
+
+      result.push({
+        product,
+        name: "Technical Datasheet",
+        type: "PDF",
+        url: product.datasheet
+      });
+
+      seen.add(product.datasheet);
+    }
+
+
+    (product.documents || [])
+      .forEach(document => {
+
+        if (
+          document.url &&
+          !seen.has(document.url)
+        ) {
+
+          result.push({
+            product,
+            ...document
+          });
+
+          seen.add(document.url);
+        }
+
+      });
+
+  });
+
+  return result;
+}
+
+
+function renderDocuments(query = "") {
+
+  const container =
+    $("#documentList");
+
+  if (!container) return;
+
+  const search =
+    normalize(query);
+
+  const documents =
+    getDocuments().filter(item => {
+
+      if (!search) return true;
+
+      return normalize(`
+        ${item.product.name}
+        ${item.product.brand}
+        ${item.product.model}
+        ${item.name}
+        ${item.type}
+      `).includes(search);
+
+    });
+
+
+  if (!documents.length) {
+
+    container.innerHTML = `
+      <div style="
+        text-align:center;
+        padding:100px 20px;
+        color:#888;
+      ">
+        No technical documents found.
+      </div>
+    `;
+
+    return;
+  }
+
+
+  container.innerHTML =
+    documents.map(item => `
+
+      <div class="document-row">
+
+        <div class="document-type">
+          ${escapeHTML(item.type || "PDF")}
+        </div>
+
+        <div>
+          <h4>
+            ${escapeHTML(item.product.name)}
+          </h4>
+
+          <small>
+            ${escapeHTML(item.name)}
+          </small>
+        </div>
+
+        <div>
+          ${escapeHTML(item.product.brand)}
+        </div>
+
+        <button
+          class="document-open"
+          data-document-url="${escapeHTML(item.url)}"
+        >
+          OPEN ↗
+        </button>
+
+      </div>
+
+    `).join("");
+
+
+  $$("[data-document-url]", container)
+    .forEach(button => {
+
+      button.addEventListener("click", () => {
+
+        window.open(
+          button.dataset.documentUrl,
+          "_blank",
+          "noopener,noreferrer"
+        );
+
+      });
+
+    });
+}
+
+
+/* =========================================================
+   SEARCH RESULTS
+========================================================= */
+
+function searchEquipment(query, limit = 8) {
+
+  const search =
+    normalize(query);
+
+  if (!search) return [];
+
+  return equipment
+    .filter(product =>
+      productSearchText(product)
+        .includes(search)
+    )
+    .slice(0, limit);
+}
+
+
+function searchResultHTML(product) {
+
+  return `
+    <div
+      class="command-result"
+      data-search-result="${escapeHTML(product.id)}"
+    >
+
+      ${
+        product.image
+          ? `
+            <img
+              src="${escapeHTML(product.image)}"
+              alt=""
+            >
+          `
+          : `
+            <img
+              src="assets/branding/vega-logo.png"
+              alt=""
+              style="opacity:.18;"
+            >
+          `
+      }
+
+      <div>
+
+        <strong>
+          ${escapeHTML(product.name)}
+        </strong>
+
+        <span>
+          ${escapeHTML(product.brand)}
+          ·
+          ${escapeHTML(product.model)}
+        </span>
+
+      </div>
+
+    </div>
+  `;
+}
+
+
+/* =========================================================
+   HERO SEARCH
+========================================================= */
+
+function renderHeroSearch(query) {
+
+  const container =
+    $("#heroSearchResults");
+
+  if (!query.trim()) {
+    container.style.display = "none";
+    container.innerHTML = "";
+    return;
+  }
+
+  const results =
+    searchEquipment(query, 6);
+
+  container.style.display = "block";
+
+  if (!results.length) {
+
+    container.innerHTML = `
+      <div style="
+        padding:25px;
+        color:#777;
+        font-size:12px;
+      ">
+        No equipment found.
+      </div>
+    `;
+
+    return;
+  }
+
+  container.innerHTML =
+    results.map(searchResultHTML).join("");
+
+  bindSearchResults(container);
+}
+
+
+/* =========================================================
+   COMMAND SEARCH
+========================================================= */
+
+function openCommandSearch() {
+
+  const overlay =
+    $("#commandOverlay");
+
+  overlay.classList.add("open");
+
+  document.body.classList.add("no-scroll");
+
+  setTimeout(() => {
+    $("#commandSearch").focus();
+  }, 100);
+}
+
+
+function closeCommandSearch() {
+
+  $("#commandOverlay")
+    .classList.remove("open");
+
+  document.body.classList.remove("no-scroll");
+
+  $("#commandSearch").value = "";
+
+  $("#commandResults").innerHTML = "";
+}
+
+
+function renderCommandResults(query) {
+
+  const container =
+    $("#commandResults");
+
+  if (!query.trim()) {
+
+    const initial =
+      equipment.slice(0, 6);
+
+    container.innerHTML =
+      initial.map(searchResultHTML).join("");
+
+    bindSearchResults(container);
+
+    return;
+  }
+
+  const results =
+    searchEquipment(query);
+
+  if (!results.length) {
+
+    container.innerHTML = `
+      <div style="
+        padding:40px 24px;
+        color:#888;
+      ">
+        No matching equipment found.
+      </div>
+    `;
+
+    return;
+  }
+
+  container.innerHTML =
+    results.map(searchResultHTML).join("");
+
+  bindSearchResults(container);
+}
+
+
+function bindSearchResults(parent) {
+
+  $$("[data-search-result]", parent)
+    .forEach(result => {
+
+      result.addEventListener("click", () => {
+
+        const id =
+          result.dataset.searchResult;
+
+        closeCommandSearch();
+
+        $("#heroSearchResults").style.display =
+          "none";
+
+        openProduct(id);
+
+      });
+
+    });
+}
+
+
+/* =========================================================
+   SYSTEM NAVIGATION
+========================================================= */
+
+function openSystem(system) {
+
+  state.search = "";
+  state.category = "all";
+  state.brand = "all";
+  state.system = system;
+
+  $("#librarySearch").value = "";
+  $("#categoryFilter").value = "all";
+  $("#brandFilter").value = "all";
+  $("#systemFilter").value = system;
+
+  showView("library");
+  renderLibrary();
+}
+
+
+/* =========================================================
+   STATISTICS
+========================================================= */
 
 function updateStatistics() {
 
-  const totalEquipment =
-    EQUIPMENT_DATA.length;
+  const documents =
+    getDocuments();
 
-  const totalBrands =
-    uniqueValues("brand").length;
+  const brands =
+    unique("brand");
 
-  const totalCategories =
-    uniqueValues("category").length;
+  $("#heroEquipmentCount").textContent =
+    String(equipment.length)
+      .padStart(2, "0");
 
-  const totalDatasheets =
-    EQUIPMENT_DATA.filter(
-      item => item.datasheet
-    ).length;
+  $("#heroDocumentCount").textContent =
+    String(documents.length)
+      .padStart(2, "0");
 
-
-  setText(
-    "#totalEquipment",
-    totalEquipment
-  );
-
-  setText(
-    "#totalBrands",
-    totalBrands
-  );
-
-  setText(
-    "#totalCategories",
-    totalCategories
-  );
-
-  setText(
-    "#totalDatasheets",
-    totalDatasheets
-  );
-
-  setText(
-    "#databaseTotal",
-    totalEquipment
-  );
-
+  $("#heroBrandCount").textContent =
+    String(brands.length)
+      .padStart(2, "0");
 }
 
 
-/* ============================================================
-   24. COPY TECHNICAL DATA
-   ============================================================ */
-
-function copyTechnicalData() {
-
-  const product =
-    state.selectedProduct;
-
-  if (!product) return;
-
-  const specs =
-    product.specifications || {};
-
-  const text = [
-    `Equipment: ${product.name}`,
-    `Brand: ${product.brand}`,
-    `Model: ${product.model}`,
-    `Category: ${product.category}`,
-    "",
-    ...Object.entries(specs)
-      .map(
-        ([key, value]) =>
-          `${key}: ${value}`
-      )
-  ].join("\n");
-
-
-  navigator.clipboard
-    .writeText(text)
-    .then(() => {
-      showToast(
-        "Technical data copied"
-      );
-    })
-    .catch(() => {
-      showToast(
-        "Unable to copy data"
-      );
-    });
-
-}
-
-
-/* ============================================================
-   25. EVENTS
-   ============================================================ */
+/* =========================================================
+   EVENTS
+========================================================= */
 
 function initializeEvents() {
 
-  /* Navigation */
+  /* Main navigation */
 
   $$("[data-nav]").forEach(button => {
 
     button.addEventListener("click", () => {
-
-      showView(
-        button.dataset.nav
-      );
-
+      showView(button.dataset.nav);
     });
 
   });
 
 
-  /* Quick Cards */
+  /* Home logo */
+
+  $("#homeButton").addEventListener(
+    "click",
+    () => showView("home")
+  );
+
+
+  /* Data-go navigation */
 
   $$("[data-go]").forEach(button => {
 
     button.addEventListener("click", () => {
-
-      const destination =
-        button.dataset.go;
-
-      if (
-        destination === "library" ||
-        destination === "documents" ||
-        destination === "home"
-      ) {
-
-        showView(destination);
-
-        return;
-      }
-
-
-      showView("library");
-
-      state.system = destination;
-
-      const systemFilter =
-        $("#systemFilter");
-
-      if (systemFilter) {
-        systemFilter.value =
-          destination;
-      }
-
-      renderEquipment();
-
+      showView(button.dataset.go);
     });
 
   });
 
 
-  /* Global Search */
+  /* System cards */
 
-  const globalSearch =
-    $("#globalSearch");
-
-  if (globalSearch) {
-
-    globalSearch.addEventListener(
-      "input",
-      event => {
-
-        renderGlobalSearchResults(
-          event.target.value
-        );
-
-      }
-    );
-
-
-    globalSearch.addEventListener(
-      "keydown",
-      event => {
-
-        if (
-          event.key === "Enter" &&
-          globalSearch.value.trim()
-        ) {
-
-          state.search =
-            globalSearch.value.trim();
-
-          const librarySearch =
-            $("#librarySearch");
-
-          if (librarySearch) {
-            librarySearch.value =
-              state.search;
-          }
-
-          showView("library");
-
-          renderEquipment();
-
-          const results =
-            $("#globalSearchResults");
-
-          if (results) {
-            results.classList.remove(
-              "active"
-            );
-          }
-
-        }
-
-      }
-    );
-
-  }
-
-
-  /* Library Search */
-
-  const librarySearch =
-    $("#librarySearch");
-
-  if (librarySearch) {
-
-    librarySearch.addEventListener(
-      "input",
-      event => {
-
-        state.search =
-          event.target.value;
-
-        renderEquipment();
-
-      }
-    );
-
-  }
-
-
-  /* Filters */
-
-  const categoryFilter =
-    $("#categoryFilter");
-
-  if (categoryFilter) {
-
-    categoryFilter.addEventListener(
-      "change",
-      event => {
-
-        state.category =
-          event.target.value;
-
-        renderEquipment();
-
-      }
-    );
-
-  }
-
-
-  const brandFilter =
-    $("#brandFilter");
-
-  if (brandFilter) {
-
-    brandFilter.addEventListener(
-      "change",
-      event => {
-
-        state.brand =
-          event.target.value;
-
-        renderEquipment();
-
-      }
-    );
-
-  }
-
-
-  const systemFilter =
-    $("#systemFilter");
-
-  if (systemFilter) {
-
-    systemFilter.addEventListener(
-      "change",
-      event => {
-
-        state.system =
-          event.target.value;
-
-        renderEquipment();
-
-      }
-    );
-
-  }
-
-
-  /* Reset Filters */
-
-  const reset =
-    $("#resetFilters");
-
-  if (reset) {
-
-    reset.addEventListener(
-      "click",
-      () => {
-
-        state.search = "";
-        state.category = "all";
-        state.brand = "all";
-        state.system = "all";
-
-        if ($("#librarySearch")) {
-          $("#librarySearch").value = "";
-        }
-
-        if ($("#categoryFilter")) {
-          $("#categoryFilter").value = "all";
-        }
-
-        if ($("#brandFilter")) {
-          $("#brandFilter").value = "all";
-        }
-
-        if ($("#systemFilter")) {
-          $("#systemFilter").value = "all";
-        }
-
-        renderEquipment();
-
-      }
-    );
-
-  }
-
-
-  /* View Modes */
-
-  $$("[data-view-mode]")
+  $$("[data-system-search]")
     .forEach(button => {
 
-      button.addEventListener(
-        "click",
-        () => {
-
-          const mode =
-            button.dataset.viewMode;
-
-          state.viewMode = mode;
-
-          $$("[data-view-mode]")
-            .forEach(item =>
-              item.classList.remove(
-                "active"
-              )
-            );
-
-          button.classList.add(
-            "active"
-          );
-
-          const grid =
-            $("#equipmentGrid");
-
-          if (grid) {
-
-            grid.classList.toggle(
-              "list-mode",
-              mode === "list"
-            );
-
-          }
-
-        }
-      );
+      button.addEventListener("click", () => {
+        openSystem(
+          button.dataset.systemSearch
+        );
+      });
 
     });
 
 
-  /* Product Close */
+  /* Hero quick search */
 
-  const closeProductButton =
-    $("#closeProduct");
+  $$("[data-search]").forEach(button => {
 
-  if (closeProductButton) {
-    closeProductButton.addEventListener(
-      "click",
-      closeProduct
-    );
-  }
+    button.addEventListener("click", () => {
 
+      state.search =
+        button.dataset.search;
 
-  const closeProductX =
-    $("#closeProductX");
+      $("#librarySearch").value =
+        state.search;
 
-  if (closeProductX) {
-    closeProductX.addEventListener(
-      "click",
-      closeProduct
-    );
-  }
+      showView("library");
+
+      renderLibrary();
+    });
+
+  });
 
 
-  const overlay =
-    $("#productOverlay");
+  /* Hero search */
 
-  if (overlay) {
+  $("#heroSearch").addEventListener(
+    "input",
+    event => {
+      renderHeroSearch(event.target.value);
+    }
+  );
 
-    overlay.addEventListener(
-      "click",
-      event => {
 
-        if (
-          event.target === overlay
-        ) {
-          closeProduct();
-        }
+  $("#heroSearch").addEventListener(
+    "keydown",
+    event => {
 
+      if (
+        event.key === "Enter" &&
+        event.target.value.trim()
+      ) {
+
+        state.search =
+          event.target.value.trim();
+
+        $("#librarySearch").value =
+          state.search;
+
+        $("#heroSearchResults").style.display =
+          "none";
+
+        showView("library");
+
+        renderLibrary();
       }
-    );
 
-  }
+    }
+  );
 
 
-  /* ESC */
+  /* Library search */
+
+  $("#librarySearch").addEventListener(
+    "input",
+    event => {
+
+      state.search =
+        event.target.value;
+
+      renderLibrary();
+    }
+  );
+
+
+  /* Filters */
+
+  $("#categoryFilter").addEventListener(
+    "change",
+    event => {
+
+      state.category =
+        event.target.value;
+
+      renderLibrary();
+    }
+  );
+
+
+  $("#brandFilter").addEventListener(
+    "change",
+    event => {
+
+      state.brand =
+        event.target.value;
+
+      renderLibrary();
+    }
+  );
+
+
+  $("#systemFilter").addEventListener(
+    "change",
+    event => {
+
+      state.system =
+        event.target.value;
+
+      renderLibrary();
+    }
+  );
+
+
+  /* Reset */
+
+  $("#resetFilters").addEventListener(
+    "click",
+    () => {
+
+      state.search = "";
+      state.category = "all";
+      state.brand = "all";
+      state.system = "all";
+
+      $("#librarySearch").value = "";
+      $("#categoryFilter").value = "all";
+      $("#brandFilter").value = "all";
+      $("#systemFilter").value = "all";
+
+      renderLibrary();
+    }
+  );
+
+
+  /* Product back */
+
+  $("#productBack").addEventListener(
+    "click",
+    closeProduct
+  );
+
+
+  /* Product tabs */
+
+  $$("[data-product-tab]")
+    .forEach(button => {
+
+      button.addEventListener("click", () => {
+
+        activateProductTab(
+          button.dataset.productTab
+        );
+
+      });
+
+    });
+
+
+  /* Document search */
+
+  $("#documentSearch").addEventListener(
+    "input",
+    event => {
+      renderDocuments(event.target.value);
+    }
+  );
+
+
+  /* Command search */
+
+  $("#openSearch").addEventListener(
+    "click",
+    () => {
+
+      openCommandSearch();
+
+      renderCommandResults("");
+    }
+  );
+
+
+  $("#closeSearch").addEventListener(
+    "click",
+    closeCommandSearch
+  );
+
+
+  $("#commandSearch").addEventListener(
+    "input",
+    event => {
+      renderCommandResults(
+        event.target.value
+      );
+    }
+  );
+
+
+  $("#commandOverlay").addEventListener(
+    "click",
+    event => {
+
+      if (
+        event.target ===
+        $("#commandOverlay")
+      ) {
+        closeCommandSearch();
+      }
+
+    }
+  );
+
+
+  /* Keyboard shortcuts */
 
   document.addEventListener(
     "keydown",
     event => {
 
-      if (event.key === "Escape") {
-
-        closeProduct();
-
-        const results =
-          $("#globalSearchResults");
-
-        if (results) {
-          results.classList.remove(
-            "active"
-          );
-        }
-
-      }
-
-    }
-  );
-
-
-  /* Product Favorite */
-
-  const favoriteProduct =
-    $("#favoriteProduct");
-
-  if (favoriteProduct) {
-
-    favoriteProduct.addEventListener(
-      "click",
-      () => {
-
-        if (
-          state.selectedProduct
-        ) {
-
-          toggleFavorite(
-            state.selectedProduct.id
-          );
-
-        }
-
-      }
-    );
-
-  }
-
-
-  /* Product Tabs */
-
-  $$(".product-tab")
-    .forEach(tab => {
-
-      tab.addEventListener(
-        "click",
-        () => {
-
-          activateProductTab(
-            tab.dataset.tab
-          );
-
-        }
-      );
-
-    });
-
-
-  /* Copy Technical Data */
-
-  const copyButton =
-    $("#copyTechnicalData");
-
-  if (copyButton) {
-
-    copyButton.addEventListener(
-      "click",
-      copyTechnicalData
-    );
-
-  }
-
-
-  /* Document Search */
-
-  const documentSearch =
-    $("#documentSearch");
-
-  if (documentSearch) {
-
-    documentSearch.addEventListener(
-      "input",
-      event => {
-
-        renderDocumentCenter(
-          event.target.value
-        );
-
-      }
-    );
-
-  }
-
-
-  /* Mobile Menu */
-
-  const mobileMenu =
-    $("#mobileMenu");
-
-  if (mobileMenu) {
-
-    mobileMenu.addEventListener(
-      "click",
-      () => {
-
-        const sidebar =
-          $("#sidebar");
-
-        if (sidebar) {
-
-          sidebar.classList.toggle(
-            "mobile-open"
-          );
-
-        }
-
-      }
-    );
-
-  }
-
-
-  /* Click outside global search */
-
-  document.addEventListener(
-    "click",
-    event => {
-
       if (
-        !event.target.closest(
-          ".global-search"
-        )
+        (event.ctrlKey || event.metaKey) &&
+        event.key.toLowerCase() === "k"
       ) {
 
-        const results =
-          $("#globalSearchResults");
+        event.preventDefault();
 
-        if (results) {
-          results.classList.remove(
-            "active"
-          );
+        openCommandSearch();
+
+        renderCommandResults("");
+      }
+
+
+      if (event.key === "Escape") {
+
+        if (
+          $("#commandOverlay")
+            .classList.contains("open")
+        ) {
+
+          closeCommandSearch();
+
+        } else if (
+          $("#productPage")
+            .classList.contains("open")
+        ) {
+
+          closeProduct();
         }
 
       }
 
     }
   );
-
 }
 
 
-/* ============================================================
-   26. START APPLICATION
-   ============================================================ */
+/* =========================================================
+   START
+========================================================= */
 
 function initializeApplication() {
 
-  console.log(
-    "%cVEGA Fuel System Technical Library",
-    "color:#ed1c24;font-size:16px;font-weight:bold;"
-  );
-
-  console.log(
-    `Database loaded: ${EQUIPMENT_DATA.length} equipment items`
-  );
-
-
   initializeFilters();
+
+  renderFeatured();
+
+  renderLibrary();
+
+  renderDocuments();
 
   updateStatistics();
 
-  updateFavoriteCount();
-
-  renderHomePreview();
-
-  renderEquipment();
-
-  renderDocumentCenter();
-
   initializeEvents();
 
+  console.log(
+    `VEGA Fuel Systems Library loaded — ${equipment.length} equipment items`
+  );
 }
 
-
-/* ============================================================
-   27. INITIALIZE
-   ============================================================ */
 
 document.addEventListener(
   "DOMContentLoaded",
