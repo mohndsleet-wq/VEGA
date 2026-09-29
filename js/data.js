@@ -1,522 +1,272 @@
 /* =========================================================
-   VEGA ENGINEERING SOLUTIONS
-   FUEL SYSTEM TECHNICAL LIBRARY
-   Equipment Database
-   ========================================================= */
+   VEGA FUEL SYSTEMS
+   EQUIPMENT DATABASE
+========================================================= */
 
-const EQUIPMENT_DATA = [
+const VEGA_EQUIPMENT = [
 
-  // ========================================================
-  // 01 — FUEL LEVEL MONITORING
-  // ========================================================
   {
     id: "FS-001",
 
     name: "OCIO Tank Level Indicator",
-    shortName: "OCIO",
     brand: "PIUSI",
     model: "OCIO",
 
-    category: "Fuel Level Monitoring",
+    category: "Level Monitoring",
     system: "Monitoring & Instrumentation",
+
+    price: "Price on Request",
+    origin: "Italy",
 
     description:
       "Electronic tank level monitoring system for continuous measurement and monitoring of diesel fuel level.",
 
-    price: 0,
-    currency: "SAR",
-
-    origin: "Italy",
-    status: "Available",
-
     image: "",
+
     images: [],
 
     datasheet: "",
+
+    featured: true,
+
+    features: [
+      "Continuous Level Monitoring",
+      "Electronic Measurement",
+      "Tank Level Indication",
+      "Fuel System Application"
+    ],
 
     specifications: {
       "Equipment Type": "Tank Level Indicator",
-      "Application": "Diesel Fuel System",
       "Manufacturer": "PIUSI",
       "Model": "OCIO",
-      "Installation": "Tank Mounted / Remote Monitoring"
+      "Application": "Diesel Fuel Tank",
+      "System": "Fuel Level Monitoring",
+      "Country of Origin": "Italy"
     },
 
-    features: [
-      "Continuous fuel level monitoring",
-      "Digital level indication",
-      "Suitable for diesel storage tanks",
-      "Easy installation and operation"
-    ],
-
-    tags: [
-      "OCIO",
-      "PIUSI",
-      "level indicator",
-      "tank monitoring",
-      "fuel level"
+    documents: [
+      {
+        name: "Technical Datasheet",
+        type: "PDF",
+        url: ""
+      }
     ]
   },
 
 
-  // ========================================================
-  // 02 — FLOAT SWITCH
-  // ========================================================
   {
     id: "FS-002",
 
-    name: "Magnetic Float Level Switch",
-    shortName: "Float Switch",
-    brand: "Generic",
-    model: "Magnetic Float Switch",
+    name: "Pressure Vacuum Vent with Flame Arrestor",
+    brand: "OPW",
+    model: "623V",
 
-    category: "Level Control",
-    system: "Monitoring & Instrumentation",
+    category: "Tank Accessories",
+    system: "Fuel Storage System",
+
+    price: "Price on Request",
+    origin: "USA",
 
     description:
-      "Magnetic float level switch used for high and low fuel level detection and alarm signals.",
-
-    price: 0,
-    currency: "SAR",
-
-    origin: "N/A",
-    status: "Available",
+      "Pressure vacuum vent designed for fuel storage tank venting with integrated flame arresting protection.",
 
     image: "",
+
     images: [],
 
     datasheet: "",
 
-    specifications: {
-      "Equipment Type": "Level Switch",
-      "Application": "Diesel Fuel Tank",
-      "Function": "High / Low Level Detection",
-      "Signal": "Dry Contact"
-    },
+    featured: true,
 
     features: [
-      "High level detection",
-      "Low level detection",
-      "Alarm signal interface",
-      "Suitable for fuel tanks"
+      "Pressure Relief",
+      "Vacuum Relief",
+      "Flame Arresting",
+      "Storage Tank Protection"
     ],
 
-    tags: [
-      "float switch",
-      "level switch",
-      "fuel alarm",
-      "tank"
+    specifications: {
+      "Equipment Type": "Pressure Vacuum Vent",
+      "Manufacturer": "OPW",
+      "Model": "623V",
+      "Application": "Fuel Storage Tank",
+      "System": "Tank Venting"
+    },
+
+    documents: [
+      {
+        name: "Technical Datasheet",
+        type: "PDF",
+        url: ""
+      }
     ]
   },
 
 
-  // ========================================================
-  // 03 — OVERFILL PROTECTION
-  // ========================================================
   {
     id: "FS-003",
 
-    name: "Overfill Prevention Valve",
-    shortName: "Overfill Valve",
-    brand: "OPW",
-    model: "Overfill Prevention Valve",
+    name: "Fuel Filling Cabinet",
+    brand: "VEGA / Approved Manufacturer",
+    model: "Stainless Steel",
 
-    category: "Tank Protection",
+    category: "Fuel Filling Equipment",
     system: "Fuel Filling System",
 
+    price: "Price on Request",
+    origin: "Saudi Arabia",
+
     description:
-      "Automatic overfill prevention valve designed to reduce the risk of fuel tank overfilling during filling operation.",
-
-    price: 0,
-    currency: "SAR",
-
-    origin: "USA",
-    status: "Available",
+      "Stainless steel fuel filling cabinet for safe and organized fuel receiving connections and filling accessories.",
 
     image: "",
+
     images: [],
 
     datasheet: "",
 
-    specifications: {
-      "Equipment Type": "Overfill Prevention Valve",
-      "Application": "Diesel Storage Tank",
-      "Function": "Automatic Overfill Protection"
-    },
+    featured: true,
 
     features: [
-      "Automatic filling shut-off",
-      "Tank overfill protection",
-      "Mechanical operation",
-      "Fuel system safety"
+      "Stainless Steel Construction",
+      "Fuel Filling Connection",
+      "Outdoor Application",
+      "Integrated Accessories"
     ],
-
-    tags: [
-      "OPW",
-      "overfill",
-      "overfill valve",
-      "tank protection"
-    ]
-  },
-
-
-  // ========================================================
-  // 04 — FUEL FILLING
-  // ========================================================
-  {
-    id: "FS-004",
-
-    name: "Stainless Steel Fuel Filling Box",
-    shortName: "Fuel Filling Box",
-    brand: "VEGA",
-    model: "Fuel Filling Cabinet",
-
-    category: "Fuel Filling",
-    system: "Fuel Filling System",
-
-    description:
-      "Stainless steel fuel filling cabinet providing a dedicated and protected filling connection for the diesel fuel system.",
-
-    price: 0,
-    currency: "SAR",
-
-    origin: "Saudi Arabia",
-    status: "Available",
-
-    image: "",
-    images: [],
-
-    datasheet: "",
 
     specifications: {
       "Equipment Type": "Fuel Filling Cabinet",
       "Material": "Stainless Steel",
       "Application": "Diesel Fuel Filling",
-      "Installation": "Outdoor / Indoor"
+      "System": "Fuel Filling System"
     },
 
-    features: [
-      "Stainless steel construction",
-      "Protected filling connection",
-      "Suitable for diesel fuel systems",
-      "Industrial installation"
-    ],
-
-    tags: [
-      "fuel filling",
-      "filling box",
-      "stainless steel",
-      "fuel cabinet"
-    ]
+    documents: []
   },
 
 
-  // ========================================================
-  // 05 — TANK VENTING
-  // ========================================================
   {
-    id: "FS-005",
-
-    name: "Pressure Vacuum Vent with Flame Arrestor",
-    shortName: "Vent & Flame Arrestor",
-    brand: "OPW",
-    model: "623V",
-
-    category: "Tank Venting",
-    system: "Fuel Storage System",
-
-    description:
-      "Pressure vacuum vent with flame arrestor used for safe ventilation of diesel fuel storage tanks.",
-
-    price: 0,
-    currency: "SAR",
-
-    origin: "USA",
-    status: "Available",
-
-    image: "",
-    images: [],
-
-    datasheet: "",
-
-    specifications: {
-      "Equipment Type": "Pressure Vacuum Vent",
-      "Model": "623V",
-      "Application": "Fuel Storage Tank",
-      "Protection": "Flame Arrestor"
-    },
-
-    features: [
-      "Tank pressure relief",
-      "Vacuum protection",
-      "Integrated flame arrestor",
-      "Fuel tank ventilation"
-    ],
-
-    tags: [
-      "OPW",
-      "623V",
-      "vent",
-      "flame arrestor",
-      "tank vent"
-    ]
-  },
-
-
-  // ========================================================
-  // 06 — VALVES
-  // ========================================================
-  {
-    id: "FS-006",
-
-    name: "Fuel System Valves",
-    shortName: "Valves",
-    brand: "GALA",
-    model: "Industrial Valve Series",
-
-    category: "Valves",
-    system: "Fuel Piping System",
-
-    description:
-      "Industrial valves for isolation, flow control and protection within diesel fuel piping systems.",
-
-    price: 0,
-    currency: "SAR",
-
-    origin: "N/A",
-    status: "Available",
-
-    image: "",
-    images: [],
-
-    datasheet: "",
-
-    specifications: {
-      "Equipment Type": "Fuel System Valves",
-      "Application": "Diesel Fuel Piping",
-      "Types": "Ball / Gate / Check",
-      "Installation": "Fuel Piping Network"
-    },
-
-    features: [
-      "Fuel flow isolation",
-      "Backflow prevention",
-      "Industrial construction",
-      "Suitable for diesel piping"
-    ],
-
-    tags: [
-      "valve",
-      "ball valve",
-      "gate valve",
-      "check valve",
-      "GALA"
-    ]
-  },
-
-
-  // ========================================================
-  // 07 — STRAINER
-  // ========================================================
-  {
-    id: "FS-007",
+    id: "FS-004",
 
     name: "Y-Strainer",
-    shortName: "Y-Strainer",
     brand: "GALA",
-    model: "Y-Strainer",
+    model: "Fuel Service",
 
-    category: "Filtration",
+    category: "Strainers & Filters",
     system: "Fuel Piping System",
 
+    price: "Price on Request",
+    origin: "—",
+
     description:
-      "Pipeline Y-strainer used to remove solid particles and protect downstream fuel system equipment.",
-
-    price: 0,
-    currency: "SAR",
-
-    origin: "N/A",
-    status: "Available",
+      "Fuel line Y-strainer for removal of solid particles and protection of downstream fuel system equipment.",
 
     image: "",
+
     images: [],
 
     datasheet: "",
+
+    featured: true,
+
+    features: [
+      "Fuel Line Filtration",
+      "Equipment Protection",
+      "Serviceable Screen",
+      "Industrial Application"
+    ],
 
     specifications: {
       "Equipment Type": "Y-Strainer",
-      "Application": "Diesel Fuel Piping",
-      "Function": "Mechanical Filtration"
+      "Application": "Diesel Fuel",
+      "System": "Fuel Piping System"
     },
 
-    features: [
-      "Pipeline filtration",
-      "Equipment protection",
-      "Removable strainer element",
-      "Suitable for diesel fuel"
-    ],
-
-    tags: [
-      "strainer",
-      "Y strainer",
-      "filter",
-      "fuel piping"
-    ]
+    documents: []
   },
 
 
-  // ========================================================
-  // 08 — FLEXIBLE CONNECTION
-  // ========================================================
   {
-    id: "FS-008",
+    id: "FS-005",
 
     name: "Flexible Fuel Connector",
-    shortName: "Flexible Connector",
-    brand: "Industrial",
-    model: "Flexible Fuel Hose",
+    brand: "Approved Manufacturer",
+    model: "Flexible Connection",
 
-    category: "Flexible Connections",
+    category: "Piping Accessories",
     system: "Fuel Piping System",
 
+    price: "Price on Request",
+    origin: "—",
+
     description:
-      "Flexible fuel connection used between vibrating equipment and rigid fuel piping to reduce transmission of vibration.",
-
-    price: 0,
-    currency: "SAR",
-
-    origin: "N/A",
-    status: "Available",
+      "Flexible connection used between fuel piping and vibrating equipment to reduce transmission of vibration and mechanical stress.",
 
     image: "",
+
     images: [],
 
     datasheet: "",
+
+    featured: false,
+
+    features: [
+      "Vibration Isolation",
+      "Flexible Connection",
+      "Fuel Compatible",
+      "Generator Application"
+    ],
 
     specifications: {
       "Equipment Type": "Flexible Connector",
-      "Application": "Diesel Fuel System",
-      "Function": "Vibration Isolation",
-      "Connection": "Fuel Piping"
+      "Service": "Diesel Fuel",
+      "Application": "Generator Fuel Connection"
     },
 
-    features: [
-      "Vibration isolation",
-      "Flexible installation",
-      "Generator fuel connection",
-      "Protects rigid piping"
-    ],
-
-    tags: [
-      "flexible connector",
-      "fuel hose",
-      "generator",
-      "vibration"
-    ]
+    documents: []
   },
 
 
-  // ========================================================
-  // 09 — FUEL PIPE
-  // ========================================================
   {
-    id: "FS-009",
+    id: "FS-006",
 
     name: "Black Steel Seamless Pipe SCH 40",
-    shortName: "Fuel Pipe SCH 40",
     brand: "NKK",
-    model: "SCH 40",
+    model: "Schedule 40",
 
-    category: "Pipes & Fittings",
+    category: "Fuel Piping",
     system: "Fuel Piping System",
 
+    price: "Price on Request",
+    origin: "Japan",
+
     description:
-      "Black steel seamless Schedule 40 pipe for diesel fuel distribution and transfer piping systems.",
-
-    price: 0,
-    currency: "SAR",
-
-    origin: "N/A",
-    status: "Available",
+      "Black steel seamless Schedule 40 pipe for diesel fuel distribution and transfer piping applications.",
 
     image: "",
+
     images: [],
 
     datasheet: "",
+
+    featured: false,
+
+    features: [
+      "Seamless Construction",
+      "Schedule 40",
+      "Industrial Fuel Service",
+      "Multiple Sizes"
+    ],
 
     specifications: {
       "Equipment Type": "Seamless Steel Pipe",
-      "Material": "Black Steel",
       "Schedule": "SCH 40",
-      "Application": "Diesel Fuel Piping"
+      "Application": "Diesel Fuel Piping",
+      "Manufacturer": "NKK"
     },
 
-    features: [
-      "Seamless steel construction",
-      "Schedule 40",
-      "Industrial fuel piping",
-      "Multiple sizes available"
-    ],
-
-    tags: [
-      "pipe",
-      "SCH40",
-      "black steel",
-      "NKK",
-      "fuel piping"
-    ]
-  },
-
-
-  // ========================================================
-  // 10 — PIPE FITTINGS
-  // ========================================================
-  {
-    id: "FS-010",
-
-    name: "Black Steel Threaded Fittings",
-    shortName: "Steel Fittings",
-    brand: "Hitachi",
-    model: "Threaded Fittings",
-
-    category: "Pipes & Fittings",
-    system: "Fuel Piping System",
-
-    description:
-      "Black steel threaded fittings for connection and routing of diesel fuel piping systems.",
-
-    price: 0,
-    currency: "SAR",
-
-    origin: "N/A",
-    status: "Available",
-
-    image: "",
-    images: [],
-
-    datasheet: "",
-
-    specifications: {
-      "Equipment Type": "Pipe Fittings",
-      "Material": "Black Steel",
-      "Connection": "Threaded",
-      "Application": "Diesel Fuel Piping"
-    },
-
-    features: [
-      "Industrial threaded connection",
-      "Multiple fitting configurations",
-      "Suitable for fuel piping",
-      "Black steel construction"
-    ],
-
-    tags: [
-      "Hitachi",
-      "fittings",
-      "threaded fittings",
-      "black steel",
-      "fuel pipe"
-    ]
+    documents: []
   }
 
 ];
