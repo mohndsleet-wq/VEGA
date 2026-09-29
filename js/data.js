@@ -222,3 +222,4 @@ const equipmentData = [
   }
 
 ];
+window.equipmentData = equipmentData;
