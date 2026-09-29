@@ -1,30 +1,17 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-  <meta
-    name="viewport"
-    content="width=device-width, initial-scale=1.0"
-  >
+  <title>VEGA | Fuel Systems Library</title>
 
   <meta
     name="description"
-    content="VEGA Fuel System Technical Library"
+    content="VEGA Engineering Solutions - Internal Fuel System Equipment & Technical Document Library"
   >
 
-  <title>VEGA | Fuel System Technical Library</title>
-
-  <!-- Fonts -->
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-
-  <link
-    href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Manrope:wght@500;600;700;800&display=swap"
-    rel="stylesheet"
-  >
-
-  <!-- Main Style -->
   <link rel="stylesheet" href="css/main.css">
 </head>
 
@@ -32,889 +19,695 @@
 <body>
 
 <!-- =========================================================
-     APPLICATION
+     VEGA — FUEL SYSTEM TECHNICAL LIBRARY
 ========================================================= -->
 
-<div class="app">
 
-  <!-- =======================================================
-       SIDEBAR
-  ======================================================== -->
+<!-- ===================== HEADER ====================== -->
 
-  <aside class="sidebar" id="sidebar">
+<header class="site-header" id="siteHeader">
 
-    <!-- BRAND -->
-    <div class="sidebar-brand">
+  <div class="header-inner">
 
-      <img
-        src="assets/branding/vega-logo.png"
-        alt="VEGA Power"
-        class="vega-logo"
-      >
+    <button class="brand" id="homeButton" aria-label="VEGA Home">
+      <img src="assets/branding/vega-logo.png" alt="VEGA Power">
+    </button>
 
-      <div class="library-name">
-        FUEL SYSTEM
-        <span>TECHNICAL LIBRARY</span>
-      </div>
+    <nav class="main-nav">
 
-    </div>
-
-
-    <!-- MAIN NAVIGATION -->
-
-    <nav class="sidebar-nav">
-
-      <div class="nav-label">
-        WORKSPACE
-      </div>
-
-      <button
-        class="nav-item active"
-        data-view="home"
-      >
-        <span class="nav-icon">⌂</span>
-
-        <span class="nav-text">
-          Home
-        </span>
+      <button class="nav-link active" data-nav="home">
+        Home
       </button>
 
-
-      <button
-        class="nav-item"
-        data-view="library"
-      >
-        <span class="nav-icon">▦</span>
-
-        <span class="nav-text">
-          Equipment Library
-        </span>
-
-        <span
-          class="nav-count"
-          id="sidebarEquipmentCount"
-        >
-          0
-        </span>
+      <button class="nav-link" data-nav="library">
+        Equipment
       </button>
 
-
-      <button
-        class="nav-item"
-        data-view="documents"
-      >
-        <span class="nav-icon">▤</span>
-
-        <span class="nav-text">
-          Document Center
-        </span>
+      <button class="nav-link" data-nav="documents">
+        Documents
       </button>
 
-
-      <!-- SYSTEMS -->
-
-      <div class="nav-label nav-space">
-        BROWSE BY SYSTEM
-      </div>
-
-
-      <button
-        class="nav-item system-link"
-        data-system="Fuel Storage"
-      >
-        <span class="system-dot"></span>
-        Fuel Storage
-      </button>
-
-
-      <button
-        class="nav-item system-link"
-        data-system="Fuel Filling"
-      >
-        <span class="system-dot"></span>
-        Fuel Filling
-      </button>
-
-
-      <button
-        class="nav-item system-link"
-        data-system="Fuel Transfer"
-      >
-        <span class="system-dot"></span>
-        Fuel Transfer
-      </button>
-
-
-      <button
-        class="nav-item system-link"
-        data-system="Level Monitoring"
-      >
-        <span class="system-dot"></span>
-        Level Monitoring
-      </button>
-
-
-      <button
-        class="nav-item system-link"
-        data-system="Venting & Overfill"
-      >
-        <span class="system-dot"></span>
-        Venting & Overfill
-      </button>
-
-
-      <button
-        class="nav-item system-link"
-        data-system="Piping & Valves"
-      >
-        <span class="system-dot"></span>
-        Piping & Valves
-      </button>
-
-
-      <button
-        class="nav-item system-link"
-        data-system="Control & Electrical"
-      >
-        <span class="system-dot"></span>
-        Control & Electrical
+      <button class="nav-link" data-nav="systems">
+        Fuel Systems
       </button>
 
     </nav>
 
 
-    <!-- SIDEBAR FOOTER -->
+    <div class="header-actions">
 
-    <div class="sidebar-footer">
+      <button class="header-search-button" id="openSearch">
+        <span class="search-icon"></span>
+        <span>Search library</span>
+        <kbd>⌘ K</kbd>
+      </button>
 
-      <div class="sidebar-status">
+      <div class="header-divider"></div>
 
-        <span class="status-light"></span>
-
-        <div>
-          <strong>Library Online</strong>
-          <small>VEGA Internal Platform</small>
-        </div>
-
-      </div>
-
-      <div class="sidebar-version">
-        ENGINEERING DATABASE · V1.0
+      <div class="internal-label">
+        <span class="status-dot"></span>
+        INTERNAL LIBRARY
       </div>
 
     </div>
 
-  </aside>
+  </div>
+
+</header>
 
 
 
-  <!-- =======================================================
-       MAIN APPLICATION
-  ======================================================== -->
+<!-- ===================== MAIN ======================== -->
 
-  <main class="main">
+<main>
 
 
-    <!-- =====================================================
-         TOP BAR
-    ====================================================== -->
+<!-- ==================================================
+     HOME
+================================================== -->
 
-    <header class="topbar">
-
-      <div class="breadcrumb">
-
-        <button
-          class="mobile-menu"
-          id="mobileMenu"
-          aria-label="Open menu"
-        >
-          ☰
-        </button>
-
-        <div>
-          <span class="breadcrumb-company">
-            VEGA ENGINEERING SOLUTIONS
-          </span>
-
-          <span class="breadcrumb-separator">
-            /
-          </span>
-
-          <span id="currentLocation">
-            Fuel System Library
-          </span>
-        </div>
-
-      </div>
+<section class="page-view active" data-view="home">
 
 
-      <div class="topbar-actions">
+  <!-- ================= HERO ================= -->
 
-        <button
-          class="top-action"
-          id="favoritesButton"
-          title="Favorites"
-        >
-          ☆
-          <span>Favorites</span>
+  <section class="hero">
 
-          <b id="favoritesCount">
-            0
-          </b>
-        </button>
-
-
-        <div class="top-divider"></div>
-
-
-        <div class="user-area">
-
-          <div class="user-avatar">
-            VE
-          </div>
-
-          <div class="user-info">
-            <strong>VEGA</strong>
-            <span>Engineering Library</span>
-          </div>
-
-        </div>
-
-      </div>
-
-    </header>
-
-
-
-    <!-- =====================================================
-         HOME VIEW
-    ====================================================== -->
-
-    <section
-      class="view active"
-      id="homeView"
+    <img
+      src="assets/hero/fuel-system-hero.jpg"
+      class="hero-background"
+      alt=""
     >
 
+    <div class="hero-overlay"></div>
 
-      <!-- HERO SEARCH -->
+    <div class="hero-grid"></div>
 
-      <section class="hero">
 
-        <div class="hero-decoration"></div>
+    <div class="hero-content">
 
+      <div class="hero-eyebrow">
 
-        <div class="hero-content">
+        <span class="eyebrow-line"></span>
 
-          <div class="hero-eyebrow">
+        VEGA ENGINEERING SOLUTIONS
 
-            <span></span>
+      </div>
 
-            VEGA FUEL SYSTEMS
 
-          </div>
+      <h1>
+        Fuel Systems
+        <span>Technical Library</span>
+      </h1>
 
 
-          <h1>
-            Technical information.
-            <br>
+      <p class="hero-description">
+        Centralized access to fuel system equipment,
+        technical data, product documentation and
+        engineering resources.
+      </p>
 
-            <em>
-              One search away.
-            </em>
-          </h1>
 
+      <!-- MAIN SEARCH -->
 
-          <p class="hero-description">
-            Search VEGA's fuel system equipment,
-            technical datasheets, models, brands and
-            engineering documents from one centralized library.
-          </p>
+      <div class="hero-search-wrapper">
 
+        <div class="hero-search">
 
+          <span class="hero-search-icon"></span>
 
-          <!-- GLOBAL SEARCH -->
+          <input
+            id="heroSearch"
+            type="search"
+            autocomplete="off"
+            placeholder="Search equipment, model, manufacturer or document..."
+          >
 
-          <div class="global-search">
-
-            <div class="global-search-icon">
-              ⌕
-            </div>
-
-
-            <input
-              type="search"
-              id="globalSearch"
-              autocomplete="off"
-              placeholder="Search equipment, model, brand, specification or document..."
-            >
-
-
-            <div class="search-shortcut">
-              CTRL K
-            </div>
-
-
-            <!-- LIVE RESULTS -->
-
-            <div
-              class="search-results"
-              id="searchResults"
-            ></div>
-
-          </div>
-
-
-          <!-- QUICK SEARCH -->
-
-          <div class="quick-search">
-
-            <span>
-              QUICK SEARCH
-            </span>
-
-            <button data-quick-search="OCIO">
-              OCIO
-            </button>
-
-            <button data-quick-search="Level">
-              Level Monitoring
-            </button>
-
-            <button data-quick-search="Valve">
-              Valves
-            </button>
-
-            <button data-quick-search="Pump">
-              Fuel Pumps
-            </button>
-
-            <button data-quick-search="Tank">
-              Fuel Tanks
-            </button>
-
-          </div>
-
-        </div>
-
-
-        <!-- HERO DATABASE STATUS -->
-
-        <div class="hero-database">
-
-          <div class="database-label">
-            TECHNICAL DATABASE
-          </div>
-
-
-          <div class="database-number">
-            <strong id="heroEquipmentCount">
-              00
-            </strong>
-
-            <span>
-              ITEMS
-            </span>
-          </div>
-
-
-          <div class="database-line"></div>
-
-
-          <div class="database-stat">
-
-            <span>
-              DOCUMENTS
-            </span>
-
-            <strong id="heroDocumentCount">
-              00
-            </strong>
-
-          </div>
-
-
-          <div class="database-stat">
-
-            <span>
-              BRANDS
-            </span>
-
-            <strong id="heroBrandCount">
-              00
-            </strong>
-
-          </div>
-
-        </div>
-
-      </section>
-
-
-
-      <!-- ===================================================
-           QUICK ACCESS
-      ==================================================== -->
-
-      <section class="quick-access">
-
-        <div class="quick-access-heading">
-
-          <span>
-            QUICK ACCESS
+          <span class="search-shortcut">
+            ENTER
           </span>
-
-          <p>
-            Jump directly to frequently used resources.
-          </p>
-
-        </div>
-
-
-        <div class="quick-access-grid">
-
-
-          <button
-            class="quick-card"
-            data-action="all-equipment"
-          >
-
-            <div class="quick-icon">
-              ▦
-            </div>
-
-            <div>
-              <strong>
-                All Equipment
-              </strong>
-
-              <span>
-                Browse complete library
-              </span>
-            </div>
-
-            <b>→</b>
-
-          </button>
-
-
-
-          <button
-            class="quick-card"
-            data-action="datasheets"
-          >
-
-            <div class="quick-icon">
-              PDF
-            </div>
-
-            <div>
-              <strong>
-                Datasheets
-              </strong>
-
-              <span>
-                Technical product files
-              </span>
-            </div>
-
-            <b>→</b>
-
-          </button>
-
-
-
-          <button
-            class="quick-card"
-            data-action="drawings"
-          >
-
-            <div class="quick-icon">
-              DWG
-            </div>
-
-            <div>
-              <strong>
-                Drawings
-              </strong>
-
-              <span>
-                Product & installation drawings
-              </span>
-            </div>
-
-            <b>→</b>
-
-          </button>
-
-
-
-          <button
-            class="quick-card"
-            data-action="recent"
-          >
-
-            <div class="quick-icon">
-              ↻
-            </div>
-
-            <div>
-              <strong>
-                Recently Viewed
-              </strong>
-
-              <span>
-                Continue where you left off
-              </span>
-            </div>
-
-            <b>→</b>
-
-          </button>
-
-        </div>
-
-      </section>
-
-
-
-      <!-- ===================================================
-           SYSTEM NAVIGATION
-      ==================================================== -->
-
-      <section class="system-section">
-
-        <div class="section-heading">
-
-          <div>
-
-            <span class="section-kicker">
-              ENGINEERING NAVIGATION
-            </span>
-
-            <h2>
-              Browse by fuel system.
-            </h2>
-
-            <p>
-              Find equipment based on where it belongs
-              within the complete fuel system.
-            </p>
-
-          </div>
-
-
-          <button
-            class="text-button"
-            data-action="all-equipment"
-          >
-            VIEW ALL EQUIPMENT →
-          </button>
-
-        </div>
-
-
-
-        <div class="system-flow">
-
-
-          <!-- STORAGE -->
-
-          <button
-            class="system-card"
-            data-system="Fuel Storage"
-          >
-
-            <span class="system-number">
-              01
-            </span>
-
-            <div class="system-icon">
-              ◉
-            </div>
-
-            <div class="system-card-content">
-
-              <strong>
-                Fuel Storage
-              </strong>
-
-              <p>
-                Bulk tanks, day tanks and
-                associated storage equipment.
-              </p>
-
-            </div>
-
-            <div class="system-arrow">
-              →
-            </div>
-
-          </button>
-
-
-
-          <!-- FILLING -->
-
-          <button
-            class="system-card"
-            data-system="Fuel Filling"
-          >
-
-            <span class="system-number">
-              02
-            </span>
-
-            <div class="system-icon">
-              ↓
-            </div>
-
-            <div class="system-card-content">
-
-              <strong>
-                Fuel Filling
-              </strong>
-
-              <p>
-                Filling points, cabinets,
-                connections and accessories.
-              </p>
-
-            </div>
-
-            <div class="system-arrow">
-              →
-            </div>
-
-          </button>
-
-
-
-          <!-- TRANSFER -->
-
-          <button
-            class="system-card"
-            data-system="Fuel Transfer"
-          >
-
-            <span class="system-number">
-              03
-            </span>
-
-            <div class="system-icon">
-              ⇆
-            </div>
-
-            <div class="system-card-content">
-
-              <strong>
-                Fuel Transfer
-              </strong>
-
-              <p>
-                Pumps, filtration and
-                transfer system components.
-              </p>
-
-            </div>
-
-            <div class="system-arrow">
-              →
-            </div>
-
-          </button>
-
-
-
-          <!-- MONITORING -->
-
-          <button
-            class="system-card"
-            data-system="Level Monitoring"
-          >
-
-            <span class="system-number">
-              04
-            </span>
-
-            <div class="system-icon">
-              ◌
-            </div>
-
-            <div class="system-card-content">
-
-              <strong>
-                Level Monitoring
-              </strong>
-
-              <p>
-                Level indicators, sensors,
-                alarms and leak detection.
-              </p>
-
-            </div>
-
-            <div class="system-arrow">
-              →
-            </div>
-
-          </button>
-
-
-
-          <!-- VENTING -->
-
-          <button
-            class="system-card"
-            data-system="Venting & Overfill"
-          >
-
-            <span class="system-number">
-              05
-            </span>
-
-            <div class="system-icon">
-              △
-            </div>
-
-            <div class="system-card-content">
-
-              <strong>
-                Venting & Overfill
-              </strong>
-
-              <p>
-                Tank vents, flame arrestors
-                and overfill protection.
-              </p>
-
-            </div>
-
-            <div class="system-arrow">
-              →
-            </div>
-
-          </button>
-
-
-
-          <!-- PIPING -->
-
-          <button
-            class="system-card"
-            data-system="Piping & Valves"
-          >
-
-            <span class="system-number">
-              06
-            </span>
-
-            <div class="system-icon">
-              ⤢
-            </div>
-
-            <div class="system-card-content">
-
-              <strong>
-                Piping & Valves
-              </strong>
-
-              <p>
-                Pipes, fittings, valves,
-                strainers and connectors.
-              </p>
-
-            </div>
-
-            <div class="system-arrow">
-              →
-            </div>
-
-          </button>
-
-
-        </div>
-
-      </section>
-
-
-
-      <!-- ===================================================
-           FEATURED / RECENT
-      ==================================================== -->
-
-      <section class="home-library">
-
-        <div class="section-heading">
-
-          <div>
-
-            <span class="section-kicker">
-              TECHNICAL LIBRARY
-            </span>
-
-            <h2>
-              Equipment at a glance.
-            </h2>
-
-          </div>
-
-
-          <button
-            class="text-button"
-            data-action="all-equipment"
-          >
-            OPEN LIBRARY →
-          </button>
 
         </div>
 
 
         <div
-          class="equipment-preview-grid"
-          id="featuredEquipment"
-        >
+          class="search-results"
+          id="heroSearchResults"
+        ></div>
+
+      </div>
+
+
+      <div class="hero-quick-search">
+
+        <span>QUICK ACCESS</span>
+
+        <button data-search="tank">
+          Fuel Tanks
+        </button>
+
+        <button data-search="pump">
+          Pumps
+        </button>
+
+        <button data-search="valve">
+          Valves
+        </button>
+
+        <button data-search="level">
+          Level Monitoring
+        </button>
+
+        <button data-search="pipe">
+          Piping
+        </button>
+
+      </div>
+
+    </div>
+
+
+    <!-- HERO LOWER INFORMATION -->
+
+    <div class="hero-bottom">
+
+      <div class="hero-bottom-inner">
+
+        <div class="hero-stat">
+
+          <span class="hero-stat-number" id="heroEquipmentCount">
+            00
+          </span>
+
+          <div>
+            <strong>Equipment</strong>
+            <span>Technical database</span>
+          </div>
+
         </div>
 
-      </section>
+
+        <div class="hero-stat">
+
+          <span class="hero-stat-number" id="heroDocumentCount">
+            00
+          </span>
+
+          <div>
+            <strong>Documents</strong>
+            <span>Technical resources</span>
+          </div>
+
+        </div>
 
 
-    </section>
+        <div class="hero-stat">
+
+          <span class="hero-stat-number" id="heroBrandCount">
+            00
+          </span>
+
+          <div>
+            <strong>Manufacturers</strong>
+            <span>Approved products</span>
+          </div>
+
+        </div>
+
+
+        <button
+          class="explore-library-button"
+          data-go="library"
+        >
+          Explore Equipment Library
+          <span>→</span>
+        </button>
+
+      </div>
+
+    </div>
+
+  </section>
 
 
 
-    <!-- =====================================================
-         EQUIPMENT LIBRARY VIEW
-    ====================================================== -->
+  <!-- ================= SYSTEM MAP ================= -->
 
-    <section
-      class="view"
-      id="libraryView"
-    >
+  <section class="systems-section">
 
+    <div class="content-container">
 
-      <div class="library-header">
+      <div class="section-heading">
 
         <div>
 
           <span class="section-kicker">
-            VEGA TECHNICAL DATABASE
+            SYSTEM NAVIGATION
           </span>
 
-          <h1>
-            Equipment Library
-          </h1>
+          <h2>
+            Explore the fuel system.
+          </h2>
 
           <p>
-            Search, filter and access technical
-            information for fuel system equipment.
+            Navigate by engineering function instead of searching
+            through folders.
           </p>
 
         </div>
 
 
-        <div class="library-result-count">
+        <button
+          class="text-link"
+          data-go="library"
+        >
+          View all equipment
+          <span>↗</span>
+        </button>
 
-          <strong id="libraryResultCount">
+      </div>
+
+
+
+      <div class="system-grid">
+
+
+        <!-- STORAGE -->
+
+        <button
+          class="system-card system-card-large"
+          data-system-search="Fuel Storage System"
+        >
+
+          <span class="system-index">
+            01
+          </span>
+
+          <div class="system-icon">
+            <svg viewBox="0 0 64 64">
+              <ellipse cx="32" cy="14" rx="18" ry="7"/>
+              <path d="M14 14v35c0 4 8 7 18 7s18-3 18-7V14"/>
+              <ellipse cx="32" cy="49" rx="18" ry="7"/>
+            </svg>
+          </div>
+
+          <div class="system-card-content">
+
+            <span>
+              STORAGE
+            </span>
+
+            <h3>
+              Fuel Storage
+            </h3>
+
+            <p>
+              Main tanks, day tanks, vents,
+              overfill protection and tank accessories.
+            </p>
+
+          </div>
+
+          <span class="system-arrow">
+            ↗
+          </span>
+
+        </button>
+
+
+
+        <!-- TRANSFER -->
+
+        <button
+          class="system-card"
+          data-system-search="Fuel Transfer System"
+        >
+
+          <span class="system-index">
+            02
+          </span>
+
+          <div class="system-icon">
+            <svg viewBox="0 0 64 64">
+              <circle cx="31" cy="32" r="15"/>
+              <path d="M46 32h12M4 32h12M31 17V8"/>
+              <path d="M25 26l13 6-13 6z"/>
+            </svg>
+          </div>
+
+          <div class="system-card-content">
+
+            <span>
+              TRANSFER
+            </span>
+
+            <h3>
+              Fuel Transfer
+            </h3>
+
+            <p>
+              Pumps, transfer assemblies and
+              fuel delivery equipment.
+            </p>
+
+          </div>
+
+          <span class="system-arrow">
+            ↗
+          </span>
+
+        </button>
+
+
+
+        <!-- MONITORING -->
+
+        <button
+          class="system-card"
+          data-system-search="Monitoring & Instrumentation"
+        >
+
+          <span class="system-index">
+            03
+          </span>
+
+          <div class="system-icon">
+            <svg viewBox="0 0 64 64">
+              <rect x="12" y="10" width="40" height="44" rx="5"/>
+              <circle cx="32" cy="30" r="11"/>
+              <path d="M32 30l7-7M22 47h20"/>
+            </svg>
+          </div>
+
+          <div class="system-card-content">
+
+            <span>
+              MONITORING
+            </span>
+
+            <h3>
+              Instrumentation
+            </h3>
+
+            <p>
+              Level indicators, switches,
+              alarms and monitoring devices.
+            </p>
+
+          </div>
+
+          <span class="system-arrow">
+            ↗
+          </span>
+
+        </button>
+
+
+
+        <!-- PIPING -->
+
+        <button
+          class="system-card"
+          data-system-search="Fuel Piping System"
+        >
+
+          <span class="system-index">
+            04
+          </span>
+
+          <div class="system-icon">
+            <svg viewBox="0 0 64 64">
+              <path d="M8 20h28v24h20"/>
+              <path d="M27 14v12M21 14h12M50 38v12M44 50h12"/>
+            </svg>
+          </div>
+
+          <div class="system-card-content">
+
+            <span>
+              DISTRIBUTION
+            </span>
+
+            <h3>
+              Piping & Valves
+            </h3>
+
+            <p>
+              Pipes, fittings, valves,
+              strainers and flexible connections.
+            </p>
+
+          </div>
+
+          <span class="system-arrow">
+            ↗
+          </span>
+
+        </button>
+
+
+
+        <!-- FILLING -->
+
+        <button
+          class="system-card"
+          data-system-search="Fuel Filling System"
+        >
+
+          <span class="system-index">
+            05
+          </span>
+
+          <div class="system-icon">
+            <svg viewBox="0 0 64 64">
+              <rect x="13" y="9" width="25" height="46" rx="3"/>
+              <path d="M38 20h7l6 7v20"/>
+              <path d="M51 47c0 6-8 6-8 0V34"/>
+              <rect x="19" y="15" width="13" height="11"/>
+            </svg>
+          </div>
+
+          <div class="system-card-content">
+
+            <span>
+              FILLING
+            </span>
+
+            <h3>
+              Fuel Filling
+            </h3>
+
+            <p>
+              Filling cabinets, connections
+              and fuel receiving equipment.
+            </p>
+
+          </div>
+
+          <span class="system-arrow">
+            ↗
+          </span>
+
+        </button>
+
+
+      </div>
+
+    </div>
+
+  </section>
+
+
+
+  <!-- ================= FEATURED EQUIPMENT ================= -->
+
+  <section class="featured-section">
+
+    <div class="content-container">
+
+      <div class="section-heading">
+
+        <div>
+
+          <span class="section-kicker">
+            EQUIPMENT LIBRARY
+          </span>
+
+          <h2>
+            Technical equipment.
+          </h2>
+
+        </div>
+
+
+        <button
+          class="text-link"
+          data-go="library"
+        >
+          Browse full library
+          <span>→</span>
+        </button>
+
+      </div>
+
+
+      <div
+        class="featured-products"
+        id="featuredProducts"
+      ></div>
+
+    </div>
+
+  </section>
+
+
+
+  <!-- ================= DOCUMENT ACCESS ================= -->
+
+  <section class="document-banner">
+
+    <div class="content-container">
+
+      <div class="document-banner-inner">
+
+        <div class="document-banner-number">
+          PDF
+        </div>
+
+
+        <div class="document-banner-copy">
+
+          <span>
+            TECHNICAL DOCUMENT CENTER
+          </span>
+
+          <h2>
+            Looking for a datasheet?
+          </h2>
+
+          <p>
+            Search technical datasheets directly by
+            equipment, manufacturer or model.
+          </p>
+
+        </div>
+
+
+        <button
+          class="document-banner-button"
+          data-go="documents"
+        >
+          Open Document Center
+          <span>↗</span>
+        </button>
+
+      </div>
+
+    </div>
+
+  </section>
+
+
+</section>
+
+
+
+<!-- ==================================================
+     EQUIPMENT LIBRARY
+================================================== -->
+
+<section class="page-view" data-view="library">
+
+  <div class="library-page">
+
+
+    <div class="library-heading">
+
+      <div class="content-container">
+
+        <span class="section-kicker">
+          VEGA TECHNICAL DATABASE
+        </span>
+
+        <h1>
+          Equipment Library
+        </h1>
+
+        <p>
+          Search and access fuel system components,
+          technical specifications and manufacturer documentation.
+        </p>
+
+      </div>
+
+    </div>
+
+
+
+    <!-- FILTER BAR -->
+
+    <div class="library-toolbar">
+
+      <div class="content-container library-toolbar-inner">
+
+
+        <div class="library-search">
+
+          <span class="hero-search-icon"></span>
+
+          <input
+            id="librarySearch"
+            type="search"
+            placeholder="Search by equipment, model or manufacturer..."
+          >
+
+        </div>
+
+
+        <select id="categoryFilter">
+          <option value="all">
+            All Categories
+          </option>
+        </select>
+
+
+        <select id="brandFilter">
+          <option value="all">
+            All Manufacturers
+          </option>
+        </select>
+
+
+        <select id="systemFilter">
+          <option value="all">
+            All Systems
+          </option>
+        </select>
+
+
+        <button
+          class="reset-filter"
+          id="resetFilters"
+        >
+          Reset
+        </button>
+
+      </div>
+
+    </div>
+
+
+
+    <!-- RESULT AREA -->
+
+    <div class="content-container library-content">
+
+
+      <div class="library-result-header">
+
+        <div>
+
+          <strong id="resultCount">
             0
           </strong>
 
@@ -924,113 +717,22 @@
 
         </div>
 
-      </div>
-
-
-
-      <!-- FILTER BAR -->
-
-      <div class="filter-bar">
-
-
-        <div class="library-search">
-
-          <span>
-            ⌕
-          </span>
-
-          <input
-            type="search"
-            id="librarySearch"
-            placeholder="Search equipment..."
-          >
-
-        </div>
-
-
-
-        <label class="filter-field">
-
-          <span>
-            SYSTEM
-          </span>
-
-          <select id="systemFilter">
-            <option value="">
-              All Systems
-            </option>
-          </select>
-
-        </label>
-
-
-
-        <label class="filter-field">
-
-          <span>
-            CATEGORY
-          </span>
-
-          <select id="categoryFilter">
-            <option value="">
-              All Categories
-            </option>
-          </select>
-
-        </label>
-
-
-
-        <label class="filter-field">
-
-          <span>
-            BRAND
-          </span>
-
-          <select id="brandFilter">
-            <option value="">
-              All Brands
-            </option>
-          </select>
-
-        </label>
-
-
-
-        <button
-          class="filter-reset"
-          id="resetFilters"
-        >
-          RESET
-        </button>
-
-      </div>
-
-
-
-      <!-- LIBRARY TOOLBAR -->
-
-      <div class="library-toolbar">
-
-        <div id="activeFilterText">
-          Showing all equipment
-        </div>
-
 
         <div class="view-switch">
 
           <button
-            class="view-mode active"
-            data-mode="grid"
+            class="active"
+            data-view-mode="grid"
+            title="Grid view"
           >
             ▦
           </button>
 
           <button
-            class="view-mode"
-            data-mode="list"
+            data-view-mode="list"
+            title="List view"
           >
-            ☷
+            ☰
           </button>
 
         </div>
@@ -1038,430 +740,434 @@
       </div>
 
 
-
-      <!-- EQUIPMENT RESULTS -->
-
       <div
         class="equipment-grid"
         id="equipmentGrid"
-      >
-      </div>
+      ></div>
 
-
-      <!-- EMPTY RESULT -->
 
       <div
         class="empty-state"
         id="emptyState"
       >
 
-        <div class="empty-icon">
-          ⌕
-        </div>
+        <span>NO RESULTS</span>
 
         <h3>
-          No equipment found
+          Equipment not found.
         </h3>
 
         <p>
-          Try another keyword or reset your filters.
+          Try another model, manufacturer or category.
         </p>
 
       </div>
 
-    </section>
+    </div>
+
+  </div>
+
+</section>
 
 
 
-    <!-- =====================================================
-         DOCUMENT CENTER VIEW
-    ====================================================== -->
+<!-- ==================================================
+     DOCUMENT CENTER
+================================================== -->
 
-    <section
-      class="view"
-      id="documentsView"
-    >
+<section class="page-view" data-view="documents">
+
+  <div class="documents-page">
 
 
-      <div class="library-header">
+    <div class="documents-hero">
 
-        <div>
+      <div class="content-container">
 
-          <span class="section-kicker">
-            DOCUMENT MANAGEMENT
-          </span>
+        <span class="section-kicker">
+          DOCUMENT CONTROL
+        </span>
 
-          <h1>
-            Document Center
-          </h1>
+        <h1>
+          Technical Documents
+        </h1>
 
-          <p>
-            Direct access to technical datasheets,
-            drawings, manuals and certificates.
-          </p>
+        <p>
+          Direct access to manufacturer datasheets
+          and technical product documentation.
+        </p>
+
+
+        <div class="documents-search">
+
+          <span class="hero-search-icon"></span>
+
+          <input
+            id="documentSearch"
+            type="search"
+            placeholder="Search datasheets by product, model or manufacturer..."
+          >
 
         </div>
 
       </div>
 
+    </div>
 
 
-      <div class="document-stat-grid">
-
-        <article>
-          <span>PDF</span>
-
-          <div>
-            <strong id="datasheetCount">
-              0
-            </strong>
-
-            <p>Datasheets</p>
-          </div>
-        </article>
-
-
-        <article>
-          <span>DWG</span>
-
-          <div>
-            <strong id="drawingCount">
-              0
-            </strong>
-
-            <p>Drawings</p>
-          </div>
-        </article>
-
-
-        <article>
-          <span>MAN</span>
-
-          <div>
-            <strong id="manualCount">
-              0
-            </strong>
-
-            <p>Manuals</p>
-          </div>
-        </article>
-
-
-        <article>
-          <span>CERT</span>
-
-          <div>
-            <strong id="certificateCount">
-              0
-            </strong>
-
-            <p>Certificates</p>
-          </div>
-        </article>
-
-      </div>
-
-
-
-      <div class="document-search">
-
-        <span>
-          ⌕
-        </span>
-
-        <input
-          id="documentSearch"
-          type="search"
-          placeholder="Search documents, equipment or brand..."
-        >
-
-      </div>
-
-
+    <div class="content-container">
 
       <div
         class="document-list"
         id="documentList"
-      >
+      ></div>
+
+    </div>
+
+  </div>
+
+</section>
+
+
+
+<!-- ==================================================
+     SYSTEMS VIEW
+================================================== -->
+
+<section class="page-view" data-view="systems">
+
+  <div class="systems-page">
+
+    <div class="content-container">
+
+      <div class="systems-page-heading">
+
+        <span class="section-kicker">
+          ENGINEERING NAVIGATION
+        </span>
+
+        <h1>
+          Fuel System Architecture
+        </h1>
+
+        <p>
+          Navigate the equipment database according
+          to its function within the complete fuel system.
+        </p>
+
       </div>
 
-    </section>
+
+      <div class="architecture-flow">
 
 
-  </main>
+        <button
+          class="architecture-node"
+          data-system-search="Fuel Filling System"
+        >
 
-</div>
+          <span>01</span>
+
+          <strong>
+            Fuel Filling
+          </strong>
+
+          <small>
+            Receiving
+          </small>
+
+        </button>
+
+
+        <div class="architecture-line">
+          →
+        </div>
+
+
+        <button
+          class="architecture-node"
+          data-system-search="Fuel Storage System"
+        >
+
+          <span>02</span>
+
+          <strong>
+            Storage
+          </strong>
+
+          <small>
+            Main / Day Tank
+          </small>
+
+        </button>
+
+
+        <div class="architecture-line">
+          →
+        </div>
+
+
+        <button
+          class="architecture-node"
+          data-system-search="Fuel Transfer System"
+        >
+
+          <span>03</span>
+
+          <strong>
+            Transfer
+          </strong>
+
+          <small>
+            Pumps
+          </small>
+
+        </button>
+
+
+        <div class="architecture-line">
+          →
+        </div>
+
+
+        <button
+          class="architecture-node"
+          data-system-search="Fuel Piping System"
+        >
+
+          <span>04</span>
+
+          <strong>
+            Distribution
+          </strong>
+
+          <small>
+            Pipes & Valves
+          </small>
+
+        </button>
+
+
+        <div class="architecture-line">
+          →
+        </div>
+
+
+        <button
+          class="architecture-node"
+          data-system-search="Monitoring & Instrumentation"
+        >
+
+          <span>05</span>
+
+          <strong>
+            Monitoring
+          </strong>
+
+          <small>
+            Control
+          </small>
+
+        </button>
+
+
+      </div>
+
+    </div>
+
+  </div>
+
+</section>
+
+
+</main>
 
 
 
-<!-- =========================================================
-     PRODUCT DETAIL MODAL
-========================================================= -->
+<!-- ==================================================
+     PRODUCT DETAIL — FULL SCREEN
+================================================== -->
 
-<div
-  class="product-overlay"
-  id="productOverlay"
+<section
+  class="product-page"
+  id="productPage"
+  aria-hidden="true"
 >
 
 
-  <article class="product-detail">
+  <!-- PRODUCT HEADER -->
+
+  <header class="product-page-header">
+
+    <button
+      class="product-back"
+      id="productBack"
+    >
+      ←
+      <span>Equipment Library</span>
+    </button>
 
 
-    <!-- PRODUCT HEADER -->
+    <div class="product-page-code">
+      <span>VEGA FUEL SYSTEMS</span>
+      <strong id="productCode">FS-000</strong>
+    </div>
 
-    <header class="product-header">
-
-      <button
-        class="product-back"
-        id="closeProduct"
-      >
-        ← BACK TO LIBRARY
-      </button>
+  </header>
 
 
-      <div class="product-header-actions">
 
-        <button
-          class="favorite-product"
-          id="favoriteProduct"
-          title="Add to favorites"
+  <div class="product-layout">
+
+
+    <!-- PRODUCT VISUAL -->
+
+    <div class="product-visual">
+
+
+      <div class="product-image-stage">
+
+        <img
+          id="productMainImage"
+          alt=""
         >
-          ☆
-        </button>
 
-
-        <button
-          class="close-product-x"
-          id="closeProductX"
-          aria-label="Close product"
+        <div
+          class="product-image-placeholder"
+          id="productImagePlaceholder"
         >
-          ×
-        </button>
-
-      </div>
-
-    </header>
-
-
-
-    <!-- PRODUCT MAIN -->
-
-    <div class="product-main">
-
-
-      <!-- IMAGE GALLERY -->
-
-      <section class="product-gallery">
-
-
-        <div class="product-image-stage">
 
           <img
-            id="productMainImage"
-            src=""
+            src="assets/branding/vega-logo.png"
             alt=""
           >
 
-          <div
-            class="image-placeholder"
-            id="productImagePlaceholder"
-          >
-            <span>VEGA</span>
-            <strong>PRODUCT IMAGE</strong>
-          </div>
-
-        </div>
-
-
-        <div
-          class="product-thumbnails"
-          id="productThumbnails"
-        >
-        </div>
-
-      </section>
-
-
-
-      <!-- PRODUCT INFORMATION -->
-
-      <section class="product-summary">
-
-
-        <div class="product-path">
-
-          <span id="productSystem">
-            —
-          </span>
-
-          <b>/</b>
-
-          <span id="productCategory">
-            —
+          <span>
+            PRODUCT IMAGE
           </span>
 
         </div>
 
-
-        <div class="product-brand-line">
-
-          <span id="productBrand">
-            —
-          </span>
-
-          <div
-            class="product-status"
-            id="productStatus"
-          >
-            <i></i>
-            LIBRARY ITEM
-          </div>
-
-        </div>
+      </div>
 
 
-        <h1 id="productName">
-          —
-        </h1>
-
-
-        <p
-          class="product-title"
-          id="productTitle"
-        >
-          —
-        </p>
-
-
-
-        <!-- COMMERCIAL -->
-
-        <div class="commercial-card">
-
-          <div>
-
-            <span>
-              UNIT PRICE
-            </span>
-
-            <strong id="productPrice">
-              —
-            </strong>
-
-          </div>
-
-
-          <div>
-
-            <span>
-              UNIT
-            </span>
-
-            <strong id="productUnit">
-              —
-            </strong>
-
-          </div>
-
-
-          <div>
-
-            <span>
-              LAST UPDATED
-            </span>
-
-            <strong id="productUpdated">
-              —
-            </strong>
-
-          </div>
-
-        </div>
-
-
-
-        <!-- BASIC DATA -->
-
-        <div class="product-basic-data">
-
-
-          <div>
-            <span>LIBRARY ID</span>
-            <strong id="productId">—</strong>
-          </div>
-
-
-          <div>
-            <span>BRAND</span>
-            <strong id="productBrandValue">—</strong>
-          </div>
-
-
-          <div>
-            <span>MODEL</span>
-            <strong id="productModel">—</strong>
-          </div>
-
-
-          <div>
-            <span>ORIGIN</span>
-            <strong id="productOrigin">—</strong>
-          </div>
-
-
-          <div>
-            <span>CATEGORY</span>
-            <strong id="productCategoryValue">—</strong>
-          </div>
-
-
-          <div>
-            <span>SYSTEM</span>
-            <strong id="productSystemValue">—</strong>
-          </div>
-
-
-        </div>
-
-
-
-        <!-- PRIMARY DOCUMENT -->
-
-        <button
-          class="datasheet-primary"
-          id="primaryDatasheet"
-        >
-
-          <div class="pdf-symbol">
-            PDF
-          </div>
-
-          <div>
-            <span>
-              PRIMARY DOCUMENT
-            </span>
-
-            <strong>
-              VIEW PRODUCT DATASHEET
-            </strong>
-          </div>
-
-          <b>
-            ↗
-          </b>
-
-        </button>
-
-
-      </section>
+      <div
+        class="product-thumbnails"
+        id="productThumbnails"
+      ></div>
 
     </div>
 
 
 
-    <!-- PRODUCT DETAIL CONTENT -->
+    <!-- PRODUCT INFORMATION -->
 
-    <div class="product-content">
+    <div class="product-information">
+
+
+      <div class="product-category-line">
+
+        <span id="productCategory">
+          CATEGORY
+        </span>
+
+        <span class="product-status">
+          <i></i>
+          TECHNICAL LIBRARY
+        </span>
+
+      </div>
+
+
+      <span
+        class="product-brand"
+        id="productBrand"
+      >
+        BRAND
+      </span>
+
+
+      <h1 id="productName">
+        Product Name
+      </h1>
+
+
+      <p
+        class="product-lead"
+        id="productDescription"
+      ></p>
+
+
+
+      <!-- QUICK DATA -->
+
+      <div class="product-quick-data">
+
+        <div>
+          <span>MODEL</span>
+          <strong id="productModel">
+            —
+          </strong>
+        </div>
+
+        <div>
+          <span>ORIGIN</span>
+          <strong id="productOrigin">
+            —
+          </strong>
+        </div>
+
+        <div>
+          <span>SYSTEM</span>
+          <strong id="productSystem">
+            —
+          </strong>
+        </div>
+
+      </div>
+
+
+
+      <!-- PRICE -->
+
+      <div class="product-commercial">
+
+        <div>
+
+          <span>
+            REFERENCE PRICE
+          </span>
+
+          <strong id="productPrice">
+            Price on Request
+          </strong>
+
+          <small>
+            Internal reference only
+          </small>
+
+        </div>
+
+
+        <button
+          class="primary-document-button"
+          id="productDatasheet"
+        >
+
+          <span class="pdf-mark">
+            PDF
+          </span>
+
+          VIEW DATASHEET
+
+          <span>
+            ↗
+          </span>
+
+        </button>
+
+      </div>
+
 
 
       <!-- TABS -->
@@ -1469,34 +1175,22 @@
       <div class="product-tabs">
 
         <button
-          class="product-tab active"
+          class="active"
           data-product-tab="overview"
         >
-          OVERVIEW
+          Overview
         </button>
 
-
         <button
-          class="product-tab"
           data-product-tab="technical"
         >
-          TECHNICAL DATA
+          Technical Data
         </button>
 
-
         <button
-          class="product-tab"
           data-product-tab="documents"
         >
-          DOCUMENTS
-        </button>
-
-
-        <button
-          class="product-tab"
-          data-product-tab="images"
-        >
-          IMAGES
+          Documents
         </button>
 
       </div>
@@ -1505,183 +1199,168 @@
 
       <!-- OVERVIEW -->
 
-      <section
-        class="product-tab-panel active"
-        id="overviewPanel"
+      <div
+        class="product-tab-content active"
+        data-product-panel="overview"
       >
 
-        <div class="detail-columns">
+        <div
+          class="product-features"
+          id="productFeatures"
+        ></div>
 
-          <div class="description-block">
-
-            <span class="detail-label">
-              EQUIPMENT DESCRIPTION
-            </span>
-
-            <h2>
-              About this equipment.
-            </h2>
-
-            <p id="productDescription">
-              —
-            </p>
-
-          </div>
-
-
-          <div class="key-features">
-
-            <span class="detail-label">
-              KEY FEATURES
-            </span>
-
-            <div
-              class="feature-list"
-              id="productFeatures"
-            >
-            </div>
-
-          </div>
-
-        </div>
-
-      </section>
+      </div>
 
 
 
       <!-- TECHNICAL -->
 
-      <section
-        class="product-tab-panel"
-        id="technicalPanel"
+      <div
+        class="product-tab-content"
+        data-product-panel="technical"
       >
-
-        <div class="technical-header">
-
-          <div>
-
-            <span class="detail-label">
-              ENGINEERING INFORMATION
-            </span>
-
-            <h2>
-              Technical data
-            </h2>
-
-          </div>
-
-
-          <button
-            class="copy-data"
-            id="copyTechnicalData"
-          >
-            COPY DATA
-          </button>
-
-        </div>
-
 
         <div
           class="technical-table"
           id="technicalTable"
-        >
-        </div>
+        ></div>
 
-      </section>
+      </div>
 
 
 
       <!-- DOCUMENTS -->
 
-      <section
-        class="product-tab-panel"
-        id="documentsPanel"
+      <div
+        class="product-tab-content"
+        data-product-panel="documents"
       >
 
-        <div class="technical-header">
-
-          <div>
-
-            <span class="detail-label">
-              PRODUCT DOCUMENTATION
-            </span>
-
-            <h2>
-              Document center
-            </h2>
-
-          </div>
-
-        </div>
-
-
         <div
-          class="product-document-list"
+          class="product-documents"
           id="productDocuments"
-        >
-        </div>
+        ></div>
 
-      </section>
-
-
-
-      <!-- IMAGES -->
-
-      <section
-        class="product-tab-panel"
-        id="imagesPanel"
-      >
-
-        <div class="technical-header">
-
-          <div>
-
-            <span class="detail-label">
-              PRODUCT MEDIA
-            </span>
-
-            <h2>
-              Images & drawings
-            </h2>
-
-          </div>
-
-        </div>
-
-
-        <div
-          class="product-image-grid"
-          id="productImageGrid"
-        >
-        </div>
-
-      </section>
+      </div>
 
 
     </div>
 
+  </div>
 
-  </article>
-
-</div>
-
+</section>
 
 
-<!-- =========================================================
-     TOAST
-========================================================= -->
+
+<!-- ==================================================
+     COMMAND SEARCH
+================================================== -->
 
 <div
-  class="toast"
-  id="toast"
+  class="command-overlay"
+  id="commandOverlay"
 >
+
+
+  <div class="command-window">
+
+
+    <div class="command-search">
+
+      <span class="hero-search-icon"></span>
+
+      <input
+        id="commandSearch"
+        type="search"
+        placeholder="Search VEGA Fuel Systems..."
+        autocomplete="off"
+      >
+
+      <button id="closeSearch">
+        ESC
+      </button>
+
+    </div>
+
+
+    <div class="command-label">
+      SEARCH RESULTS
+    </div>
+
+
+    <div
+      class="command-results"
+      id="commandResults"
+    ></div>
+
+
+    <div class="command-footer">
+
+      <span>
+        ↑ ↓ Navigate
+      </span>
+
+      <span>
+        ENTER Open
+      </span>
+
+      <span>
+        ESC Close
+      </span>
+
+    </div>
+
+  </div>
+
 </div>
 
 
 
-<!-- =========================================================
+<!-- ==================================================
+     TOAST
+================================================== -->
+
+<div class="toast" id="toast"></div>
+
+
+
+<!-- ==================================================
+     FOOTER
+================================================== -->
+
+<footer class="site-footer">
+
+  <div class="content-container footer-inner">
+
+    <img
+      src="assets/branding/vega-logo.png"
+      alt="VEGA"
+    >
+
+    <div>
+      <strong>
+        Fuel Systems Technical Library
+      </strong>
+
+      <span>
+        Internal engineering resource
+      </span>
+    </div>
+
+
+    <p>
+      VEGA Engineering Solutions
+    </p>
+
+  </div>
+
+</footer>
+
+
+
+<!-- ==================================================
      JAVASCRIPT
-========================================================= -->
+================================================== -->
 
 <script src="js/data.js"></script>
 <script src="js/app.js"></script>
