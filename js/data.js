@@ -3,270 +3,222 @@
    EQUIPMENT DATABASE
 ========================================================= */
 
-const VEGA_EQUIPMENT = [
+const equipmentData = [
 
   {
-    id: "FS-001",
+    id: "FT-001",
+    category: "Fuel Tanks",
+    subcategory: "Storage Tanks",
+
+    name: "Diesel Fuel Storage Tank",
+    model: "Custom Fabricated",
+    manufacturer: "AL-AYASH",
+
+    description:
+      "Diesel fuel storage tank designed for generator fuel systems and complete with required connections and accessories.",
+
+    price: "Contact Sales",
+    currency: "SAR",
+
+    image: "assets/products/fuel-tank.jpg",
+
+    specifications: {
+      "Tank Type": "Aboveground",
+      "Fuel": "Diesel",
+      "Construction": "Steel",
+      "Capacity": "Project Specific",
+      "Configuration": "Single / Double Wall",
+      "Installation": "Indoor / Outdoor"
+    },
+
+    documents: [
+      {
+        name: "Technical Datasheet",
+        type: "PDF",
+        url: "assets/documents/fuel-tank-datasheet.pdf"
+      }
+    ],
+
+    featured: true
+  },
+
+
+  {
+    id: "LM-001",
+    category: "Level Monitoring",
+    subcategory: "Tank Monitoring",
 
     name: "OCIO Tank Level Indicator",
-    brand: "PIUSI",
     model: "OCIO",
+    manufacturer: "PIUSI",
 
+    description:
+      "Electronic tank level monitoring system for continuous fuel level measurement and indication.",
+
+    price: "Contact Sales",
+    currency: "SAR",
+
+    image: "assets/products/ocio.jpg",
+
+    specifications: {
+      "Application": "Fuel Tank Level Monitoring",
+      "Display": "Digital",
+      "Measurement": "Continuous",
+      "Installation": "Tank Monitoring System"
+    },
+
+    documents: [
+      {
+        name: "Technical Datasheet",
+        type: "PDF",
+        url: "assets/documents/ocio-datasheet.pdf"
+      }
+    ],
+
+    featured: true
+  },
+
+
+  {
+    id: "LV-001",
     category: "Level Monitoring",
-    system: "Monitoring & Instrumentation",
+    subcategory: "Level Switches",
 
-    price: "Price on Request",
-    origin: "Italy",
-
-    description:
-      "Electronic tank level monitoring system for continuous measurement and monitoring of diesel fuel level.",
-
-    image: "",
-
-    images: [],
-
-    datasheet: "",
-
-    featured: true,
-
-    features: [
-      "Continuous Level Monitoring",
-      "Electronic Measurement",
-      "Tank Level Indication",
-      "Fuel System Application"
-    ],
-
-    specifications: {
-      "Equipment Type": "Tank Level Indicator",
-      "Manufacturer": "PIUSI",
-      "Model": "OCIO",
-      "Application": "Diesel Fuel Tank",
-      "System": "Fuel Level Monitoring",
-      "Country of Origin": "Italy"
-    },
-
-    documents: [
-      {
-        name: "Technical Datasheet",
-        type: "PDF",
-        url: ""
-      }
-    ]
-  },
-
-
-  {
-    id: "FS-002",
-
-    name: "Pressure Vacuum Vent with Flame Arrestor",
-    brand: "OPW",
-    model: "623V",
-
-    category: "Tank Accessories",
-    system: "Fuel Storage System",
-
-    price: "Price on Request",
-    origin: "USA",
+    name: "Magnetic Float Switch",
+    model: "Float Level Switch",
+    manufacturer: "AL-AYASH",
 
     description:
-      "Pressure vacuum vent designed for fuel storage tank venting with integrated flame arresting protection.",
+      "Magnetic float switch used for high and low fuel level monitoring and alarm signals.",
 
-    image: "",
+    price: "Contact Sales",
+    currency: "SAR",
 
-    images: [],
-
-    datasheet: "",
-
-    featured: true,
-
-    features: [
-      "Pressure Relief",
-      "Vacuum Relief",
-      "Flame Arresting",
-      "Storage Tank Protection"
-    ],
+    image: "assets/products/float-switch.jpg",
 
     specifications: {
-      "Equipment Type": "Pressure Vacuum Vent",
-      "Manufacturer": "OPW",
-      "Model": "623V",
-      "Application": "Fuel Storage Tank",
-      "System": "Tank Venting"
-    },
-
-    documents: [
-      {
-        name: "Technical Datasheet",
-        type: "PDF",
-        url: ""
-      }
-    ]
-  },
-
-
-  {
-    id: "FS-003",
-
-    name: "Fuel Filling Cabinet",
-    brand: "VEGA / Approved Manufacturer",
-    model: "Stainless Steel",
-
-    category: "Fuel Filling Equipment",
-    system: "Fuel Filling System",
-
-    price: "Price on Request",
-    origin: "Saudi Arabia",
-
-    description:
-      "Stainless steel fuel filling cabinet for safe and organized fuel receiving connections and filling accessories.",
-
-    image: "",
-
-    images: [],
-
-    datasheet: "",
-
-    featured: true,
-
-    features: [
-      "Stainless Steel Construction",
-      "Fuel Filling Connection",
-      "Outdoor Application",
-      "Integrated Accessories"
-    ],
-
-    specifications: {
-      "Equipment Type": "Fuel Filling Cabinet",
-      "Material": "Stainless Steel",
-      "Application": "Diesel Fuel Filling",
-      "System": "Fuel Filling System"
-    },
-
-    documents: []
-  },
-
-
-  {
-    id: "FS-004",
-
-    name: "Y-Strainer",
-    brand: "GALA",
-    model: "Fuel Service",
-
-    category: "Strainers & Filters",
-    system: "Fuel Piping System",
-
-    price: "Price on Request",
-    origin: "—",
-
-    description:
-      "Fuel line Y-strainer for removal of solid particles and protection of downstream fuel system equipment.",
-
-    image: "",
-
-    images: [],
-
-    datasheet: "",
-
-    featured: true,
-
-    features: [
-      "Fuel Line Filtration",
-      "Equipment Protection",
-      "Serviceable Screen",
-      "Industrial Application"
-    ],
-
-    specifications: {
-      "Equipment Type": "Y-Strainer",
       "Application": "Diesel Fuel",
-      "System": "Fuel Piping System"
+      "Function": "High / Low Level Detection",
+      "Output": "Level Alarm Signal",
+      "Installation": "Fuel Tank"
     },
 
-    documents: []
+    documents: [
+      {
+        name: "Technical Datasheet",
+        type: "PDF",
+        url: "assets/documents/float-switch-datasheet.pdf"
+      }
+    ],
+
+    featured: false
   },
 
 
   {
-    id: "FS-005",
+    id: "VA-001",
+    category: "Valves",
+    subcategory: "Tank Accessories",
 
-    name: "Flexible Fuel Connector",
-    brand: "Approved Manufacturer",
-    model: "Flexible Connection",
-
-    category: "Piping Accessories",
-    system: "Fuel Piping System",
-
-    price: "Price on Request",
-    origin: "—",
+    name: "Pressure Vacuum Vent",
+    model: "623V",
+    manufacturer: "OPW",
 
     description:
-      "Flexible connection used between fuel piping and vibrating equipment to reduce transmission of vibration and mechanical stress.",
+      "Pressure vacuum vent for fuel storage tank venting applications.",
 
-    image: "",
+    price: "Contact Sales",
+    currency: "SAR",
 
-    images: [],
-
-    datasheet: "",
-
-    featured: false,
-
-    features: [
-      "Vibration Isolation",
-      "Flexible Connection",
-      "Fuel Compatible",
-      "Generator Application"
-    ],
+    image: "assets/products/opw-623v.jpg",
 
     specifications: {
-      "Equipment Type": "Flexible Connector",
-      "Service": "Diesel Fuel",
-      "Application": "Generator Fuel Connection"
+      "Application": "Fuel Storage Tank",
+      "Function": "Pressure / Vacuum Venting",
+      "Installation": "Tank Vent Connection"
     },
 
-    documents: []
+    documents: [
+      {
+        name: "Technical Datasheet",
+        type: "PDF",
+        url: "assets/documents/opw-623v.pdf"
+      }
+    ],
+
+    featured: true
   },
 
 
   {
-    id: "FS-006",
+    id: "PI-001",
+    category: "Piping",
+    subcategory: "Fuel Piping",
 
-    name: "Black Steel Seamless Pipe SCH 40",
-    brand: "NKK",
-    model: "Schedule 40",
-
-    category: "Fuel Piping",
-    system: "Fuel Piping System",
-
-    price: "Price on Request",
-    origin: "Japan",
+    name: "Black Steel Seamless Pipe",
+    model: "SCH 40",
+    manufacturer: "NKK",
 
     description:
-      "Black steel seamless Schedule 40 pipe for diesel fuel distribution and transfer piping applications.",
+      "Schedule 40 seamless black steel pipe for diesel fuel supply, return and transfer piping systems.",
 
-    image: "",
+    price: "Contact Sales",
+    currency: "SAR",
 
-    images: [],
-
-    datasheet: "",
-
-    featured: false,
-
-    features: [
-      "Seamless Construction",
-      "Schedule 40",
-      "Industrial Fuel Service",
-      "Multiple Sizes"
-    ],
+    image: "assets/products/sch40-pipe.jpg",
 
     specifications: {
-      "Equipment Type": "Seamless Steel Pipe",
+      "Material": "Black Steel",
+      "Type": "Seamless",
       "Schedule": "SCH 40",
-      "Application": "Diesel Fuel Piping",
-      "Manufacturer": "NKK"
+      "Application": "Diesel Fuel Piping"
     },
 
-    documents: []
+    documents: [
+      {
+        name: "Technical Datasheet",
+        type: "PDF",
+        url: "assets/documents/sch40-pipe.pdf"
+      }
+    ],
+
+    featured: false
+  },
+
+
+  {
+    id: "CP-001",
+    category: "Control Panels",
+    subcategory: "Fuel System Control",
+
+    name: "Fuel System Control Panel",
+    model: "Custom Control Panel",
+    manufacturer: "ALFANAR / ABB",
+
+    description:
+      "Fuel system control panel for monitoring and controlling fuel transfer equipment, alarms and level signals.",
+
+    price: "Contact Sales",
+    currency: "SAR",
+
+    image: "assets/products/control-panel.jpg",
+
+    specifications: {
+      "Enclosure": "IP56",
+      "Components": "ABB",
+      "Application": "Fuel Transfer System",
+      "Configuration": "Project Specific"
+    },
+
+    documents: [
+      {
+        name: "Technical Datasheet",
+        type: "PDF",
+        url: "assets/documents/control-panel.pdf"
+      }
+    ],
+
+    featured: true
   }
 
 ];
